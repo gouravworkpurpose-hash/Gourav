@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRIMHD T-Code Alignment Project Visualisation</title>
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide icons CDN -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        .tab-active {
+            border-bottom-width: 2px;
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+        .phase-dot {
+            width: 24px;
+            height: 24px;
+            background-color: #2563eb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            position: absolute;
+            left: -12px;
+            top: 0;
+        }
+        .phase-line {
+            position: relative;
+            border-left: 2px solid #bfdbfe;
+            padding-left: 2rem;
+            padding-bottom: 2rem;
+        }
+        .phase-line:last-child {
+            border-left: none;
+            padding-bottom: 0;
+        }
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .status-in-progress {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        .status-upcoming {
+            background-color: #f3f4f6;
+            color: #4b5563;
+        }
+        .status-completed {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .hover-shadow:hover {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .standard-link {
+            color: #2563eb;
+            text-decoration: underline;
+            transition: color 0.2s;
+        }
+        .standard-link:hover {
+            color: #1d4ed8;
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen p-6">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="bg-white rounded-lg card-shadow p-6 mb-6">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-slate-800 mb-2">PRIMHD T-Code Alignment Project</h1>
+                    <p class="text-slate-600 mb-4">Recordbase Configuration & Compliance Update</p>
+                </div>
+                <div class="bg-blue-50 rounded-lg p-4 border border-blue-200 max-w-md">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i data-lucide="file-text" class="text-blue-600 w-5 h-5"></i>
+                        <h3 class="font-semibold text-slate-800">Reference Standard</h3>
+                    </div>
+                    <p class="text-sm text-slate-700 mb-2">This project aligns with:</p>
+                    <a href="https://www.tewhatuora.govt.nz/assets/For-the-health-sector/HISO-10023-3-2025-PRIMHD-Code-Set-Standard.pdf" 
+                       target="_blank" 
+                       class="standard-link text-sm font-medium inline-flex items-center gap-1">
+                        <i data-lucide="external-link" class="w-4 h-4"></i>
+                        HISO 10023.3:2025 PRIMHD Code Set Standard
+                    </a>
+                    <p class="text-xs text-slate-500 mt-2">Published by Te Whatu Ora, June 2025</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="users" class="text-blue-600 w-5 h-5"></i>
+                    <div>
+                        <div class="text-xs text-slate-500">Project Lead</div>
+                        <div class="font-semibold text-slate-800">Gourav Saini</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <i data-lucide="target" class="text-green-600 w-5 h-5"></i>
+                    <div>
+                        <div class="text-xs text-slate-500">Standard</div>
+                        <div class="font-semibold text-slate-800">HISO 10023.3:2025</div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <i data-lucide="calendar" class="text-purple-600 w-5 h-5"></i>
+                    <div>
+                        <div class="text-xs text-slate-500">Target Completion</div>
+                        <div class="font-semibold text-slate-800">March/April 2026</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="bg-white rounded-lg card-shadow mb-6">
+            <div class="flex border-b overflow-x-auto">
+                <button onclick="switchTab('timeline')" id="tab-timeline" class="px-6 py-3 font-medium text-sm whitespace-nowrap tab-active">
+                    Timeline
+                </button>
+                <button onclick="switchTab('scope')" id="tab-scope" class="px-6 py-3 font-medium text-sm whitespace-nowrap text-slate-600 hover:text-slate-800">
+                    Scope
+                </button>
+                <button onclick="switchTab('roles')" id="tab-roles" class="px-6 py-3 font-medium text-sm whitespace-nowrap text-slate-600 hover:text-slate-800">
+                    Roles
+                </button>
+                <button onclick="switchTab('risks')" id="tab-risks" class="px-6 py-3 font-medium text-sm whitespace-nowrap text-slate-600 hover:text-slate-800">
+                    Risks
+                </button>
+            </div>
+
+            <div class="p-6">
+                <!-- Timeline View -->
+                <div id="view-timeline" class="space-y-6">
+                    <div class="flex items-center gap-2 mb-4">
+                        <i data-lucide="clock" class="text-blue-600 w-6 h-6"></i>
+                        <h2 class="text-2xl font-bold text-slate-800">Project Timeline</h2>
+                    </div>
+                    <div id="timeline-content">
+                        <!-- Timeline content will be inserted here by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Scope View -->
+                <div id="view-scope" class="space-y-4" style="display: none;">
+                    <div class="flex items-center gap-2 mb-4">
+                        <i data-lucide="file-text" class="text-blue-600 w-6 h-6"></i>
+                        <h2 class="text-2xl font-bold text-slate-800">Project Scope</h2>
+                    </div>
+                    <div id="scope-content" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Scope content will be inserted here by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Roles View -->
+                <div id="view-roles" class="space-y-4" style="display: none;">
+                    <div class="flex items-center gap-2 mb-4">
+                        <i data-lucide="users" class="text-blue-600 w-6 h-6"></i>
+                        <h2 class="text-2xl font-bold text-slate-800">Roles & Responsibilities</h2>
+                    </div>
+                    <div id="roles-content" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Roles content will be inserted here by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Risks View -->
+                <div id="view-risks" class="space-y-4" style="display: none;">
+                    <div class="flex items-center gap-2 mb-4">
+                        <i data-lucide="alert-circle" class="text-orange-600 w-6 h-6"></i>
+                        <h2 class="text-2xl font-bold text-slate-800">Risks & Mitigation</h2>
+                    </div>
+                    <div id="risks-content" class="space-y-3">
+                        <!-- Risks content will be inserted here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Deliverables -->
+        <div class="bg-white rounded-lg card-shadow p-6">
+            <div class="flex items-center gap-2 mb-4">
+                <i data-lucide="settings" class="text-blue-600 w-6 h-6"></i>
+                <h2 class="text-2xl font-bold text-slate-800">Key Deliverables</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div class="flex items-start gap-2 p-3 bg-slate-50 rounded-lg">
+                    <i data-lucide="check-circle" class="text-green-600 w-4 h-4 mt-0.5"></i>
+                    <span class="text-sm text-slate-700">Complete Recordbase T-Code Audit Report</span>
+                </div>
+                <div class="flex items-start gap-2 p-3 bg-slate-50 rounded-lg">
+                    <i data-lucide="check-circle" class="text-green-600 w-4 h-4 mt-0.5"></i>
+                    <span class="text-sm text-slate-700">Service Data Packs (configuration, usage, errors)</span>
+                </div>
+                <div class="flex items-start gap-2 p-3 bg-slate-50 rounded-lg">
+                    <i data-lucide="check-circle" class="text-green-600 w-4 h-4 mt-0.5"></i>
+                    <span class="text-sm text-slate-700">Director-approved T-Code lists</span>
+                </div>
+                <div class="flex items-start gap-2 p-3 bg-slate-50 rounded-lg">
+                    <i data-lucide="check-circle" class="text-green-600 w-4 h-4 mt-0.5"></i>
+                    <span class="text-sm text-slate-700">Final Alignment Implementation</span>
+                </div>
+                <div class="flex items-start gap-2 p-3 bg-slate-50 rounded-lg">
+                    <i data-lucide="check-circle" class="text-green-600 w-4 h-4 mt-0.5"></i>
+                    <span class="text-sm text-slate-700">Redesigned dynamic Activity Template</span>
+                </div>
+                <div class="flex items-start gap-2 p-3 bg-slate-50 rounded-lg">
+                    <i data-lucide="check-circle" class="text-green-600 w-4 h-4 mt-0.5"></i>
+                    <span class="text-sm text-slate-700">QA-tested PRIMHD reporting outputs</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Data (moved from React state) - UPDATED WITH NEW PHASE
+        const phases = [
+            {
+                name: "Phase 1: Audit & Extraction",
+                duration: "1-2 weeks (Before Dec 17th)",
+                status: "in-progress",
+                milestones: [
+                    "Export all Recordbase PRIMHD configurations",
+                    "Conduct system-wide audit of active and legacy codes",
+                    "Extract activity utilisation patterns since July 2024",
+                    "Identify obvious misconfigurations"
+                ]
+            },
+            {
+                name: "Phase 2: Analysis & Data Pack Development",
+                duration: "1-2 weeks (Before Dec 17th)",
+                status: "upcoming",
+                milestones: [
+                    "Analyse utilisation patterns and identify incorrect T-Codes",
+                    "Review mapping against HISO 10023.3:2025",
+                    "Draft service-level Data Packs"
+                ]
+            },
+            {
+                name: "Phase 2.5: Quality Check of Analysis & Data Packs",
+                duration: "3-4 days (Before submission to Directors)",
+                status: "upcoming",
+                milestones: [
+                    "Cross-verify analysis results with PRIMHD standards",
+                    "Review Data Packs for completeness and accuracy",
+                    "Validate T-Code recommendations with advisory team",
+                    "Final quality assurance before Director submission"
+                ]
+            },
+            {
+                name: "Phase 3: Director Review & Confirmation",
+                duration: "1 week (Before Jan 11th)",
+                status: "upcoming",
+                milestones: [
+                    "Share Data Packs with Directors",
+                    "Hold hui with Directors and service managers",
+                    "Record approved changes for each service"
+                ]
+            },
+            {
+                name: "Phase 4: Training Site Implementation",
+                duration: "2 weeks",
+                status: "upcoming",
+                milestones: [
+                    "Apply approved configuration changes",
+                    "Introduce new valid codes",
+                    "Confirm correct mapping across all components"
+                ]
+            },
+            {
+                name: "Phase 5: Review, Testing & QA",
+                duration: "1-2 weeks",
+                status: "upcoming",
+                milestones: [
+                    "Conduct detailed review and testing",
+                    "Validate dynamic Activity Template",
+                    "Run validation queries",
+                    "Verify reporting outputs"
+                ]
+            },
+            {
+                name: "Phase 6: Live Site Implementation",
+                duration: "1 week",
+                status: "upcoming",
+                milestones: [
+                    "Implement changes in Live site",
+                    "Ensure all mappings are correct",
+                    "Communicate go-live completion"
+                ]
+            },
+            {
+                name: "Phase 7: Post-Implementation Review",
+                duration: "1-2 weeks (March/April 2026)",
+                status: "upcoming",
+                milestones: [
+                    "Evaluate system behaviour",
+                    "Confirm error reduction",
+                    "Final presentation to IT & Data Committee"
+                ]
+            }
+        ];
+
+        const scope = [
+            { title: "PRIMHD Code Sets", items: ["HC (Healthcare User)", "LS (Legal Status)", "Overall Framework"] },
+            { title: "Referral & Service", items: ["RD (Referral Discharge)", "TR (Team)", "Service PRIMHD status"] },
+            { title: "Activity & Engagement", items: ["AT (Activity)", "CN (Classification)", "Supplementary Codes", "Dynamic Activity Template"] },
+            { title: "Outcome & Collection", items: ["CO (Collection Occasion)", "OT (Outcome Tool)", "OI (Outcome Item)"] },
+            { title: "Compliance", items: ["HISO 10023.3:2025 alignment", "Team/Activity/Setting mapping", "Legacy code retirement"] }
+        ];
+
+        const roles = [
+            { name: "Gourav Saini", role: "Project Lead", responsibilities: "Lead project, conduct audit, prepare Data Packs, implement changes" },
+            { name: "Pietro Zubiri (Rocky)", role: "Support", responsibilities: "Validate service requirements, provide contract context" },
+            { name: "Traci-Mae Nathan", role: "Advisory", responsibilities: "Provide PRIMHD standards guidance, sense-check outputs" },
+            { name: "Directors", role: "Approvers", responsibilities: "Review and confirm correct T-Codes, approve final alignment" },
+            { name: "Managers & Team Leads", role: "Validators", responsibilities: "Validate recommendations, provide operational insights" },
+            { name: "Kaimahi", role: "Users", responsibilities: "Sense-check activity patterns, confirm practical use" }
+        ];
+
+        const risks = [
+            { risk: "Incorrect service PRIMHD configuration", impact: "Misreporting", mitigation: "Initial Validation Through Contract Review" },
+            { risk: "Director availability delays", impact: "Slow approvals", mitigation: "Provide packs early, offer flexible hui times" },
+            { risk: "Misinterpretation of PRIMHD codes", impact: "Incorrect alignment", mitigation: "Advisory support from Traci-Mae" },
+            { risk: "Staff resistance to change", impact: "Adoption issues", mitigation: "Clear communication, show data patterns" }
+        ];
+
+        // Tab switching function
+        function switchTab(tabName) {
+            // Hide all views
+            document.getElementById('view-timeline').style.display = 'none';
+            document.getElementById('view-scope').style.display = 'none';
+            document.getElementById('view-roles').style.display = 'none';
+            document.getElementById('view-risks').style.display = 'none';
+            
+            // Remove active class from all tabs
+            document.getElementById('tab-timeline').classList.remove('tab-active');
+            document.getElementById('tab-scope').classList.remove('tab-active');
+            document.getElementById('tab-roles').classList.remove('tab-active');
+            document.getElementById('tab-risks').classList.remove('tab-active');
+            
+            // Show selected view and activate tab
+            document.getElementById('view-' + tabName).style.display = 'block';
+            document.getElementById('tab-' + tabName).classList.add('tab-active');
+        }
+
+        // Status badge rendering function
+        function getStatusBadge(status) {
+            const colors = {
+                'in-progress': 'status-in-progress',
+                'upcoming': 'status-upcoming',
+                'completed': 'status-completed'
+            };
+            const text = {
+                'in-progress': 'In Progress',
+                'upcoming': 'Upcoming',
+                'completed': 'Completed'
+            };
+            return `<span class="status-badge ${colors[status]}">${text[status]}</span>`;
+        }
+
+        // Render timeline
+        function renderTimeline() {
+            let timelineHTML = '';
+            phases.forEach((phase, index) => {
+                timelineHTML += `
+                    <div class="phase-line">
+                        <div class="phase-dot">${index + 1}</div>
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <div class="flex items-start justify-between mb-2">
+                                <h3 class="text-lg font-bold text-slate-800">${phase.name}</h3>
+                                ${getStatusBadge(phase.status)}
+                            </div>
+                            <p class="text-sm text-slate-600 mb-3">${phase.duration}</p>
+                            <ul class="space-y-1">
+                                ${phase.milestones.map(milestone => `
+                                    <li class="flex items-start gap-2 text-sm text-slate-700">
+                                        <i data-lucide="check-circle" class="text-green-600 w-4 h-4 mt-0.5"></i>
+                                        <span>${milestone}</span>
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('timeline-content').innerHTML = timelineHTML;
+            lucide.createIcons(); // Reinitialize icons
+        }
+
+        // Render scope
+        function renderScope() {
+            let scopeHTML = '';
+            scope.forEach(category => {
+                scopeHTML += `
+                    <div class="bg-gradient-to-br from-blue-50 to-slate-50 rounded-lg p-4 border border-blue-100">
+                        <h3 class="text-lg font-bold text-slate-800 mb-3">${category.title}</h3>
+                        <ul class="space-y-2">
+                            ${category.items.map(item => `
+                                <li class="flex items-start gap-2 text-sm text-slate-700">
+                                    <div class="w-1.5 h-1.5 bg-blue-600 rounded-full mt-1.5 flex-shrink-0"></div>
+                                    <span>${item}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                `;
+            });
+            document.getElementById('scope-content').innerHTML = scopeHTML;
+        }
+
+        // Render roles
+        function renderRoles() {
+            let rolesHTML = '';
+            roles.forEach(person => {
+                rolesHTML += `
+                    <div class="bg-white border border-slate-200 rounded-lg p-4 hover-shadow transition-shadow">
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="users" class="text-blue-600 w-5 h-5"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="font-bold text-slate-800">${person.name}</h3>
+                                <p class="text-sm text-blue-600 font-medium mb-2">${person.role}</p>
+                                <p class="text-sm text-slate-600">${person.responsibilities}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('roles-content').innerHTML = rolesHTML;
+            lucide.createIcons(); // Reinitialize icons
+        }
+
+        // Render risks
+        function renderRisks() {
+            let risksHTML = '';
+            risks.forEach(item => {
+                risksHTML += `
+                    <div class="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg p-4 border border-orange-100">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <h4 class="text-xs font-semibold text-orange-800 uppercase mb-1">Risk</h4>
+                                <p class="text-sm text-slate-800 font-medium">${item.risk}</p>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-semibold text-orange-800 uppercase mb-1">Impact</h4>
+                                <p class="text-sm text-slate-700">${item.impact}</p>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-semibold text-green-800 uppercase mb-1">Mitigation</h4>
+                                <p class="text-sm text-slate-700">${item.mitigation}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('risks-content').innerHTML = risksHTML;
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Render all views
+            renderTimeline();
+            renderScope();
+            renderRoles();
+            renderRisks();
+            
+            // Set initial tab to timeline
+            switchTab('timeline');
+        });
+    </script>
+</body>
+</html>
