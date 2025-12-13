@@ -1,0 +1,1552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRIMHD T-Code Alignment - Director Data Pack</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --light-bg: #f8f9fa;
+            --border-color: #dee2e6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 25px 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .info-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--secondary-color);
+        }
+        
+        .info-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-card h3 i {
+            color: var(--secondary-color);
+        }
+        
+        .section {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light-bg);
+        }
+        
+        .section-title {
+            font-size: 22px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .filter-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .service-filter {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .toggle-btn {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .toggle-btn:hover {
+            background: #2980b9;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        th {
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+            text-align: left;
+            padding: 12px 15px;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        
+        .status-yes {
+            background-color: #d5f4e6;
+            color: var(--success-color);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .status-no {
+            background-color: #ffeaea;
+            color: var(--accent-color);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .recommendation-add {
+            background-color: #e8f4fc;
+            color: var(--secondary-color);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        
+        .recommendation-remove {
+            background-color: #fde8e8;
+            color: var(--accent-color);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+        
+        .action-required {
+            background-color: #fff8e6;
+            border-left: 4px solid #f39c12;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        
+        .action-required h3 {
+            color: #d68910;
+            margin-bottom: 15px;
+        }
+        
+        .checkbox-list {
+            margin: 15px 0;
+        }
+        
+        .checkbox-list li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+        }
+        
+        .checkbox-list input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+        
+        .contact-info {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .contact-card {
+            text-align: center;
+            padding: 15px;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .contact-card h4 {
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .contact-card p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #777;
+            font-size: 14px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .tag-high-usage {
+            background-color: #e1f7e1;
+            color: #27ae60;
+        }
+        
+        .tag-medium-usage {
+            background-color: #fff4e1;
+            color: #f39c12;
+        }
+        
+        .tag-low-usage {
+            background-color: #ffeaea;
+            color: #e74c3c;
+        }
+        
+        .collapse {
+            display: block;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section {
+                padding: 15px;
+            }
+            
+            th, td {
+                padding: 8px 10px;
+                font-size: 14px;
+            }
+            
+            .filter-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-project-diagram"></i> PRIMHD T-Code Alignment - Director Data Pack</h1>
+            <p>Service Configuration Review & Approval Package</p>
+        </div>
+        
+        <div class="info-grid">
+            <div class="info-card">
+                <h3><i class="fas fa-user-tie"></i> Director Information</h3>
+                <p><strong>Director:</strong> <span id="director-name">Julia Aramoana</span></p>
+                <p><strong>Department:</strong> Integrated Health Services - Supported Living</p>
+                <p><strong>Date Prepared:</strong> 10/12/2025 to 16/12/2025 </p>
+            </div>
+            
+            <div class="info-card">
+                <h3><i class="fas fa-users"></i> Management Team</h3>
+                <p><strong>Manager(s):</strong> Kalo Tekii</p>
+                <p><strong>Team Leader(s):</strong> Kylie Porter, Tremain Tauhinu</p>
+                <p><strong>Services Covered:</strong> 6</p>
+            </div>
+            
+            <div class="info-card">
+                <h3><i class="fas fa-chart-line"></i> Project Status</h3>
+                <p><strong>Phase:</strong> 2 & 3 - Director review & Confirmation</p>
+                <p><strong>Timeline:</strong> Before Jan 11, 2026</p>
+                <p><strong>Status:</strong> In Progress</p>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-clipboard-list"></i> 1. Service Overview</h2>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Service Name</th>
+                        <th>PRIMHD in CRM?</th>
+                        <th>Contract Requires PRIMHD?</th>
+                        <th>Current Team Code</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Clinical Mental Health</td>
+                        <td><span class="status-yes">Yes</span></td>
+                        <td><span class="status-no">?</span></td>
+                        <td>011663</td>
+                        <td>Is this required as a service in RB? Not PRIMHD-reporting per contract</td>
+                    </tr>
+                    <tr>
+                        <td>Housing & Recovery</td>
+                        <td><span class="status-yes">Yes</span></td>
+                        <td><span class="status-yes">Yes</span></td>
+                        <td>015396</td>
+                        <td>No Comments</td>
+                    </tr>
+                    <tr>
+                        <td>Housing & Recovery Intense Rehab</td>
+                        <td><span class="status-yes">Yes</span></td>
+                        <td><span class="status-yes">Yes</span></td>
+                        <td>011665</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Rapua</td>
+                        <td><span class="status-yes">Yes</span></td>
+                        <td><span class="status-no">NOT PRIMHD</span></td>
+                        <td>016684</td>
+                        <td>Need confirmation: Should we keep Rapua as PRIMHD in RB, or classify it as non-PRIMHD?</td>
+                    </tr>
+                    <tr>
+                        <td>Te Aho Rangi Day Programme</td>
+                        <td><span class="status-yes">Yes</span></td>
+                        <td><span class="status-yes">Yes</span></td>
+                        <td>015480</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Te Paerangi</td>
+                        <td><span class="status-yes">Yes</span></td>
+                        <td><span class="status-yes">Yes</span></td>
+                        <td>016800</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-code"></i> 
+
+2. Current PRIMHD Activity Type Code Configured</h2>
+                <div class="filter-controls">
+                    <select class="service-filter" id="tcodeServiceFilter" onchange="filterTCodeTable()">
+                        <option value="all">All Services</option>
+                        <option value="Clinical Mental Health">Clinical Mental Health</option>
+                        <option value="Housing & Recovery">Housing & Recovery</option>
+                        <option value="Housing & Recovery Intense Rehab">Housing & Recovery Intense Rehab</option>
+                        <option value="Rapua">Rapua</option>
+                        <option value="Te Aho Rangi Day Programme">Te Aho Rangi Day Programme</option>
+                        <option value="Te Paerangi">Te Paerangi</option>
+                    </select>
+                    <button class="toggle-btn" onclick="toggleTable('tcode-table')">Show/Hide Details</button>
+                </div>
+            </div>
+            <div id="tcode-table" class="collapse">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Service Name</th>
+                            <th>Type Setting Code</th>
+                            <th>Definition</th>
+                            <th>Example of Use</th>
+                            <th>Active in Recordbase?</th>
+                            <th>Configured for Service?</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tcodeTableBody">
+                        <tr data-service="Clinical Mental Health">
+                            <td>Clinical Mental Health</td>
+                            <td>AV</td>
+                            <td>Video Call/Zoom</td>
+                            <td>Contact made via Video Call</td>
+                            <td><span class="status-yes">Yes</span></td>
+                            <td><span class="status-yes">Yes</span></td>
+                        </tr>
+                        <tr data-service="Clinical Mental Health">
+                            <td>Clinical Mental Health</td>
+                            <td>CM</td>
+                            <td>Community</td>
+                            <td>Service provided to a tangata whaiora/consumer in a non hospital setting which is
+ not specifically covered by any of the other definitions</td>
+                            <td><span class="status-yes">Yes</span></td>
+                            <td><span class="status-yes">Yes</span></td>
+                        </tr>
+                        <tr data-service="Housing & Recovery">
+                            <td>Housing & Recovery</td>
+                            <td>T01</td>
+                            <td>Assessment - Clinical</td>
+                            <td>Initial mental health assessment</td>
+                            <td><span class="status-yes">Yes</span></td>
+                            <td><span class="status-yes">Yes</span></td>
+                        </tr>
+                        <tr data-service="Housing & Recovery">
+                            <td>Housing & Recovery</td>
+                            <td>T03</td>
+                            <td>Attempt to Contact</td>
+                            <td>Phone call not answered</td>
+                            <td><span class="status-yes">Yes</span></td>
+                            <td><span class="status-no">No</span></td>
+                        </tr>
+                        <tr data-service="Housing & Recovery Intense Rehab">
+                            <td>Housing & Recovery Intense Rehab</td>
+                            <td>T02</td>
+                            <td>Treatment - Individual</td>
+                            <td>One-on-one therapy session</td>
+                            <td><span class="status-yes">Yes</span></td>
+                            <td><span class="status-yes">Yes</span></td>
+                        </tr>
+                        <tr data-service="Housing & Recovery Intense Rehab">
+                            <td>Housing & Recovery Intense Rehab</td>
+                            <td>T04</td>
+                            <td>Treatment - Group</td>
+                            <td>Group therapy session</td>
+                            <td><span class="status-yes">Yes</span></td>
+                            <td><span class="status-no">No</span></td>
+                        </tr>
+                        <tr data-service="Rapua">
+                            <td>Rapua</td>
+                            <td>T01</td>
+                            <td>Assessment - Clinical</td>
+                            <td>Initial mental health assessment</td>
+                            <td><span class="status-yes">Yes</span></td>
+                            <td><span class="status-yes">Yes</span></td>
+                        </tr>
+                        <tr data-service="Te Aho Rangi Day Programme">
+                            <td>Te Aho Rangi Day Programme</td>
+                            <td>T04</td>
+                            <td>Treatment - Group</td>
+                            <td>Group therapy session</td>
+                            <td><span class="status-yes">Yes</span></td>
+                            <td><span class="status-yes">Yes</span></td>
+                        </tr>
+                        <tr data-service="Te Paerangi">
+                            <td>Te Paerangi</td>
+                            <td>T02</td>
+                            <td>Treatment - Individual</td>
+                            <td>One-on-one therapy session</td>
+                            <td><span class="status-yes">Yes</span></td>
+                            <td><span class="status-yes">Yes</span></td>
+                        </tr>
+                        <tr data-service="Te Paerangi">
+                            <td>Te Paerangi</td>
+                            <td>T09</td>
+                            <td>Legacy - Follow up (Retired)</td>
+                            <td>Old follow-up code</td>
+                            <td><span class="status-yes">Yes</span></td>
+                            <td><span class="status-yes">Yes</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-chart-bar"></i>
+
+
+2.1. Current PRIMHD T-Codes Configured</h2>
+                <div class="filter-controls">
+                    <select class="service-filter" id="tcodeServiceFilter" onchange="filterTCodeTable()">
+                        <option value="all">All Services</option>
+                        <option value="Clinical Mental Health">Clinical Mental Health</option>
+                        <option value="Housing & Recovery">Housing & Recovery</option>
+                        <option value="Housing & Recovery Intense Rehab">Housing & Recovery Intense Rehab</option>
+                        <option value="Rapua">Rapua</option>
+                        <option value="Te Aho Rangi Day Programme">Te Aho Rangi Day Programme</option>
+                        <option value="Te Paerangi">Te Paerangi</option>
+                    </select>
+                    <button class="toggle-btn" onclick="toggleTable('tcode-table')">Show/Hide Details</button>
+                </div>
+            </div>
+            <div id="tcode-table" class="collapse">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Service Name</th>
+                            <th>T-Code</th>
+                            <th>Definition</th>
+                            <th>Example of Use</th>
+                            <th>Active in Recordbase?</th>
+                            <th>Configured for Service?</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tcodeTableBody">
+                        <tr data-service="Clinical Mental Health">
+                            <td>Clinical Mental Health</td>
+                            <td>T01</td>
+                            <td>Assessment - Clinical</td>
+                            <td>Initial mental health assessment</td>
+                            <td><span class="status-yes">Yes</span></td>
+                            <td><span class="status-yes">Yes</span></td>
+                        </tr>
+                        <tr data-service="Clinical Mental Health">
+                            <td>Clinical Mental Health</td>
+                            <td>T02</td>
+                            <td>Treatment - Individual</td>
+                            <td>One-on-one therapy session</td>
+                            <td><span class="status-yes">Yes</span></td>
+                            <td><span class="status-yes">Yes</span></td>
+                        </tr>
+                        <tr data-service="Housing & Recovery">
+                            <td>Housing & Recovery</td>
+                            <td>T01</td>
+                            <td>Assessment - Clinical</td>
+                            <td>Initial mental health assessment</td>
+                            <td><span class="status-yes">Yes</span></td>
+                            <td><span class="status-yes">Yes</span></td>
+                        </tr>
+                        <tr data-service="Housing & Recovery">
+                            <td>Housing & Recovery</td>
+                            <td>T03</td>
+                            <td>Attempt to Contact</td>
+                            <td>Phone call not answered</td>
+                            <td><span class="status-yes">Yes</span></td>
+                            <td><span class="status-no">No</span></td>
+                        </tr>
+                        <tr data-service="Housing & Recovery Intense Rehab">
+                            <td>Housing & Recovery Intense Rehab</td>
+                            <td>T02</td>
+                            <td>Treatment - Individual</td>
+                            <td>One-on-one therapy session</td>
+                            <td><span class="status-yes">Yes</span></td>
+                            <td><span class="status-yes">Yes</span></td>
+                        </tr>
+                        <tr data-service="Housing & Recovery Intense Rehab">
+                            <td>Housing & Recovery Intense Rehab</td>
+                            <td>T04</td>
+                            <td>Treatment - Group</td>
+                            <td>Group therapy session</td>
+                            <td><span class="status-yes">Yes</span></td>
+                            <td><span class="status-no">No</span></td>
+                        </tr>
+                        <tr data-service="Rapua">
+                            <td>Rapua</td>
+                            <td>T01</td>
+                            <td>Assessment - Clinical</td>
+                            <td>Initial mental health assessment</td>
+                            <td><span class="status-yes">Yes</span></td>
+                            <td><span class="status-yes">Yes</span></td>
+                        </tr>
+                        <tr data-service="Te Aho Rangi Day Programme">
+                            <td>Te Aho Rangi Day Programme</td>
+                            <td>T04</td>
+                            <td>Treatment - Group</td>
+                            <td>Group therapy session</td>
+                            <td><span class="status-yes">Yes</span></td>
+                            <td><span class="status-yes">Yes</span></td>
+                        </tr>
+                        <tr data-service="Te Paerangi">
+                            <td>Te Paerangi</td>
+                            <td>T02</td>
+                            <td>Treatment - Individual</td>
+                            <td>One-on-one therapy session</td>
+                            <td><span class="status-yes">Yes</span></td>
+                            <td><span class="status-yes">Yes</span></td>
+                        </tr>
+                        <tr data-service="Te Paerangi">
+                            <td>Te Paerangi</td>
+                            <td>T09</td>
+                            <td>Legacy - Follow up (Retired)</td>
+                            <td>Old follow-up code</td>
+                            <td><span class="status-yes">Yes</span></td>
+                            <td><span class="status-yes">Yes</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-chart-bar"></i>
+
+
+ 3. T-Code Utilization (Since July 1, 2024)</h2>
+                <div class="filter-controls">
+                    <select class="service-filter" id="utilizationServiceFilter" onchange="filterUtilizationTable()">
+                        <option value="all">All Services</option>
+                        <option value="Clinical Mental Health">Clinical Mental Health</option>
+                        <option value="Housing & Recovery">Housing & Recovery</option>
+                        <option value="Housing & Recovery Intense Rehab">Housing & Recovery Intense Rehab</option>
+                        <option value="Rapua">Rapua</option>
+                        <option value="Te Aho Rangi Day Programme">Te Aho Rangi Day Programme</option>
+                        <option value="Te Paerangi">Te Paerangi</option>
+                    </select>
+                    <button class="toggle-btn" onclick="toggleChart()">Show/Hide Chart</button>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="usageChart"></canvas>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Service Name</th>
+                        <th>T-Code</th>
+                        <th>Activity Count</th>
+                        <th>Total Hours</th>
+                        <th>Common Engagement</th>
+                        <th>Usage Level</th>
+                    </tr>
+                </thead>
+                <tbody id="utilizationTableBody">
+                    <tr data-service="Clinical Mental Health">
+                        <td>Clinical Mental Health</td>
+                        <td>T43</td>
+                        <td>30</td>
+                        <td>--</td>
+                        <td>Community Support Contacts</td>
+                        <td><span class="tag tag-medium-usage">Medium</span></td>
+                    </tr>
+                    <tr data-service="Clinical Mental Health">
+                        <td>Clinical Mental Health</td>
+                        <td>T53</td>
+                        <td>1</td>
+                        <td>--</td>
+                        <td>Individual treatment attendance</td>
+                        <td><span class="tag tag-low-usage">Low</span></td>
+                    </tr>
+                    <tr data-service="Housing & Recovery">
+                        <td>Housing & Recovery</td>
+                        <td>T03</td>
+                        <td>80</td>
+                        <td>20</td>
+                        <td>Attempt to Contact</td>
+                        <td><span class="tag tag-medium-usage">Medium</span></td>
+                    </tr>
+                    <tr data-service="Housing & Recovery">
+                        <td>Housing & Recovery</td>
+                        <td>T01</td>
+                        <td>95</td>
+                        <td>47.5</td>
+                        <td>Successful Contact</td>
+                        <td><span class="tag tag-high-usage">High</span></td>
+                    </tr>
+                    <tr data-service="Housing & Recovery Intense Rehab">
+                        <td>Housing & Recovery Intense Rehab</td>
+                        <td>T02</td>
+                        <td>200</td>
+                        <td>100</td>
+                        <td>Appointment</td>
+                        <td><span class="tag tag-high-usage">High</span></td>
+                    </tr>
+                    <tr data-service="Rapua">
+                        <td>Rapua</td>
+                        <td>T01</td>
+                        <td>45</td>
+                        <td>22.5</td>
+                        <td>Successful Contact</td>
+                        <td><span class="tag tag-low-usage">Low</span></td>
+                    </tr>
+                    <tr data-service="Te Aho Rangi Day Programme">
+                        <td>Te Aho Rangi Day Programme</td>
+                        <td>T04</td>
+                        <td>110</td>
+                        <td>165</td>
+                        <td>Group Session</td>
+                        <td><span class="tag tag-high-usage">High</span></td>
+                    </tr>
+                    <tr data-service="Te Paerangi">
+                        <td>Te Paerangi</td>
+                        <td>T02</td>
+                        <td>85</td>
+                        <td>42.5</td>
+                        <td>Appointment</td>
+                        <td><span class="tag tag-medium-usage">Medium</span></td>
+                    </tr>
+                    <tr data-service="Te Paerangi">
+                        <td>Te Paerangi</td>
+                        <td>T09</td>
+                        <td>30</td>
+                        <td>15</td>
+                        <td>Follow-up</td>
+                        <td><span class="tag tag-low-usage">Low</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-exclamation-triangle"></i> 4. Missing vs Available T-Codes</h2>
+                <div class="filter-controls">
+                    <select class="service-filter" id="missingServiceFilter" onchange="filterMissingTable()">
+                        <option value="all">All Services</option>
+                        <option value="Clinical Mental Health">Clinical Mental Health</option>
+                        <option value="Housing & Recovery">Housing & Recovery</option>
+                        <option value="Housing & Recovery Intense Rehab">Housing & Recovery Intense Rehab</option>
+                        <option value="Rapua">Rapua</option>
+                        <option value="Te Aho Rangi Day Programme">Te Aho Rangi Day Programme</option>
+                        <option value="Te Paerangi">Te Paerangi</option>
+                    </select>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Service Name</th>
+                        <th>Required T-Code</th>
+                        <th>Currently in Recordbase?</th>
+                        <th>Available for Service?</th>
+                        <th>Recommended Action</th>
+                    </tr>
+                </thead>
+                <tbody id="missingTableBody">
+                    <tr data-service="Housing & Recovery">
+                        <td>Housing & Recovery</td>
+                        <td>T04 (Group Treatment)</td>
+                        <td><span class="status-yes">Yes</span></td>
+                        <td><span class="status-no">No</span></td>
+                        <td><span class="recommendation-add">Add to service</span></td>
+                    </tr>
+                    <tr data-service="Clinical Mental Health">
+                        <td>Clinical Mental Health</td>
+                        <td>T05 (Crisis Intervention)</td>
+                        <td><span class="status-no">No</span></td>
+                        <td><span class="status-no">No</span></td>
+                        <td><span class="recommendation-add">Add to system & service</span></td>
+                    </tr>
+                    <tr data-service="Te Paerangi">
+                        <td>Te Paerangi</td>
+                        <td>T09 (Legacy - Follow up)</td>
+                        <td><span class="status-yes">Yes</span></td>
+                        <td><span class="status-yes">Yes</span></td>
+                        <td><span class="recommendation-remove">Remove - Retired code</span></td>
+                    </tr>
+                    <tr data-service="Rapua">
+                        <td>Rapua</td>
+                        <td>T03 (Attempt to Contact)</td>
+                        <td><span class="status-yes">Yes</span></td>
+                        <td><span class="status-no">No</span></td>
+                        <td><span class="recommendation-add">Add to service</span></td>
+                    </tr>
+                    <tr data-service="Housing & Recovery Intense Rehab">
+                        <td>Housing & Recovery Intense Rehab</td>
+                        <td>T06 (Family/Whānau Consultation)</td>
+                        <td><span class="status-yes">Yes</span></td>
+                        <td><span class="status-no">No</span></td>
+                        <td><span class="recommendation-add">Add to service</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-th-list"></i> 5. Current Breakdown Options in Activity Template</h2>
+                <div class="filter-controls">
+                    <select class="service-filter" id="breakdownServiceFilter" onchange="filterBreakdownTable()">
+                        <option value="all">All Services</option>
+                        <option value="Clinical Mental Health">Clinical Mental Health</option>
+                        <option value="Housing & Recovery">Housing & Recovery</option>
+                        <option value="Housing & Recovery Intense Rehab">Housing & Recovery Intense Rehab</option>
+                        <option value="Rapua">Rapua</option>
+                        <option value="Te Aho Rangi Day Programme">Te Aho Rangi Day Programme</option>
+                        <option value="Te Paerangi">Te Paerangi</option>
+                    </select>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Service Name</th>
+                        <th>Engagement Type</th>
+                        <th>Available Breakdown Options</th>
+                        <th>Notes / Issues</th>
+                    </tr>
+                </thead>
+                <tbody id="breakdownTableBody">
+                    <tr data-service="Clinical Mental Health">
+                        <td>Clinical Mental Health</td>
+                        <td>Attempt to Contact</td>
+                        <td>Phone, SMS, Email, Letter</td>
+                        <td>Some options not relevant to service</td>
+                    </tr>
+                    <tr data-service="Housing & Recovery">
+                        <td>Housing & Recovery</td>
+                        <td>Successful Contact</td>
+                        <td>Assessment, Treatment, Planning</td>
+                        <td>Missing "Whānau Involvement" option</td>
+                    </tr>
+                    <tr data-service="Housing & Recovery Intense Rehab">
+                        <td>Housing & Recovery Intense Rehab</td>
+                        <td>Appointment (Pre-Booked)</td>
+                        <td>In-person, Phone, Video</td>
+                        <td>All options valid</td>
+                    </tr>
+                    <tr data-service="Rapua">
+                        <td>Rapua</td>
+                        <td>DNA (Did Not Attend)</td>
+                        <td>Phone follow-up, Letter, Reschedule</td>
+                        <td>Options not aligned with PRIMHD standard</td>
+                    </tr>
+                    <tr data-service="Te Aho Rangi Day Programme">
+                        <td>Te Aho Rangi Day Programme</td>
+                        <td>Group Activity</td>
+                        <td>Therapy, Skills Training, Social Activity</td>
+                        <td>All options valid</td>
+                    </tr>
+                    <tr data-service="Te Paerangi">
+                        <td>Te Paerangi</td>
+                        <td>Successful Contact</td>
+                        <td>Assessment, Treatment, Review</td>
+                        <td>Missing cultural practice options</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-check-circle"></i> 6. Recommendations for Approval</h2>
+                <div class="filter-controls">
+                    <select class="service-filter" id="recommendationServiceFilter" onchange="filterRecommendationTable()">
+                        <option value="all">All Services</option>
+                        <option value="Clinical Mental Health">Clinical Mental Health</option>
+                        <option value="Housing & Recovery">Housing & Recovery</option>
+                        <option value="Housing & Recovery Intense Rehab">Housing & Recovery Intense Rehab</option>
+                        <option value="Rapua">Rapua</option>
+                        <option value="Te Aho Rangi Day Programme">Te Aho Rangi Day Programme</option>
+                        <option value="Te Paerangi">Te Paerangi</option>
+                    </select>
+                </div>
+            </div>
+            
+            <h3 style="color: var(--primary-color); margin: 20px 0 10px 0;">A. T-Codes to Assign to Services</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Service Name</th>
+                        <th>T-Code</th>
+                        <th>Reason</th>
+                        <th>Priority</th>
+                    </tr>
+                </thead>
+                <tbody id="recommendationAddTableBody">
+                    <tr data-service="Clinical Mental Health">
+                        <td>Clinical Mental Health</td>
+                        <td><strong>T01</strong> – Assessment - Clinical</td>
+                        <td>High utilisation, aligns with service purpose</td>
+                        <td><span class="tag tag-high-usage">High</span></td>
+                    </tr>
+                    <tr data-service="Clinical Mental Health">
+                        <td>Clinical Mental Health</td>
+                        <td><strong>T02</strong> – Treatment - Individual</td>
+                        <td>Core service activity</td>
+                        <td><span class="tag tag-high-usage">High</span></td>
+                    </tr>
+                    <tr data-service="Housing & Recovery">
+                        <td>Housing & Recovery</td>
+                        <td><strong>T03</strong> – Attempt to Contact</td>
+                        <td>Needed for engagement tracking</td>
+                        <td><span class="tag tag-medium-usage">Medium</span></td>
+                    </tr>
+                    <tr data-service="Housing & Recovery Intense Rehab">
+                        <td>Housing & Recovery Intense Rehab</td>
+                        <td><strong>T04</strong> – Treatment - Group</td>
+                        <td>Core group therapy component</td>
+                        <td><span class="tag tag-high-usage">High</span></td>
+                    </tr>
+                    <tr data-service="Te Aho Rangi Day Programme">
+                        <td>Te Aho Rangi Day Programme</td>
+                        <td><strong>T04</strong> – Treatment - Group</td>
+                        <td>Primary service delivery method</td>
+                        <td><span class="tag tag-high-usage">High</span></td>
+                    </tr>
+                    <tr data-service="Rapua">
+                        <td>Rapua</td>
+                        <td><strong>T01</strong> – Assessment - Clinical</td>
+                        <td>Initial assessment requirement</td>
+                        <td><span class="tag tag-high-usage">High</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3 style="color: var(--primary-color); margin: 20px 0 10px 0;">B. T-Codes to Remove</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Service Name</th>
+                        <th>T-Code</th>
+                        <th>Reason</th>
+                    </tr>
+                </thead>
+                <tbody id="recommendationRemoveTableBody">
+                    <tr data-service="Te Paerangi">
+                        <td>Te Paerangi</td>
+                        <td><strong>T09</strong> – Legacy code no longer in HISO standard</td>
+                        <td>Not compliant, low usage</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3 style="color: var(--primary-color); margin: 20px 0 10px 0;">C. Updates to Breakdown Options</h3>
+            <p>We propose updating the <strong>Activity Template</strong> to dynamically show only valid breakdowns per engagement type, and adding:</p>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>Whānau Involvement</strong> flag under <em>Successful Contact</em></li>
+                <li><strong>Crisis Code</strong> option under <em>Attempt to Contact</em></li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-user-plus"></i> 7. Referrers</h2>
+                <div class="filter-controls">
+                    <select class="service-filter" id="referrerServiceFilter" onchange="filterReferrerTable()">
+                        <option value="all">All Services</option>
+                        <option value="Clinical Mental Health">Clinical Mental Health</option>
+                        <option value="Housing & Recovery">Housing & Recovery</option>
+                        <option value="Housing & Recovery Intense Rehab">Housing & Recovery Intense Rehab</option>
+                        <option value="Rapua">Rapua</option>
+                        <option value="Te Aho Rangi Day Programme">Te Aho Rangi Day Programme</option>
+                        <option value="Te Paerangi">Te Paerangi</option>
+                    </select>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Service Name</th>
+                        <th>Referrer Name</th>
+                        <th>Referrer Type</th>
+                        <th>Organization</th>
+                        <th>Contact</th>
+                    </tr>
+                </thead>
+                <tbody id="referrerTableBody">
+                    <tr data-service="Clinical Mental Health">
+                        <td>Clinical Mental Health</td>
+                        <td>Dr. Sarah Mitchell</td>
+                        <td>General Practitioner</td>
+                        <td>Auckland Central Medical Centre</td>
+                        <td>s.mitchell@acmc.nz</td>
+                    </tr>
+                    <tr data-service="Clinical Mental Health">
+                        <td>Clinical Mental Health</td>
+                        <td>Mental Health Crisis Team</td>
+                        <td>Crisis Service</td>
+                        <td>Auckland DHB</td>
+                        <td>crisis@adhb.govt.nz</td>
+                    </tr>
+                    <tr data-service="Housing & Recovery">
+                        <td>Housing & Recovery</td>
+                        <td>Community Support Team</td>
+                        <td>Social Service</td>
+                        <td>Lifewise Trust</td>
+                        <td>support@lifewise.org.nz</td>
+                    </tr>
+                    <tr data-service="Housing & Recovery">
+                        <td>Housing & Recovery</td>
+                        <td>Dr. James Patel</td>
+                        <td>Psychiatrist</td>
+                        <td>Auckland Mental Health Services</td>
+                        <td>j.patel@amhs.nz</td>
+                    </tr>
+                    <tr data-service="Housing & Recovery Intense Rehab">
+                        <td>Housing & Recovery Intense Rehab</td>
+                        <td>Inpatient Ward Team</td>
+                        <td>Hospital Service</td>
+                        <td>Auckland City Hospital</td>
+                        <td>inpatient@ach.govt.nz</td>
+                    </tr>
+                    <tr data-service="Housing & Recovery Intense Rehab">
+                        <td>Housing & Recovery Intense Rehab</td>
+                        <td>Dr. Linda Wong</td>
+                        <td>Clinical Psychologist</td>
+                        <td>Auckland Psychology Centre</td>
+                        <td>l.wong@apc.nz</td>
+                    </tr>
+                    <tr data-service="Rapua">
+                        <td>Rapua</td>
+                        <td>Māori Health Services</td>
+                        <td>Cultural Service</td>
+                        <td>Te Whare Tapa Whā</td>
+                        <td>referrals@twtwh.org.nz</td>
+                    </tr>
+                    <tr data-service="Rapua">
+                        <td>Rapua</td>
+                        <td>Kaumatua Advocacy Team</td>
+                        <td>Community Service</td>
+                        <td>Ngāti Whātua Ōrākei</td>
+                        <td>kaumatua@nwo.org.nz</td>
+                    </tr>
+                    <tr data-service="Te Aho Rangi Day Programme">
+                        <td>Te Aho Rangi Day Programme</td>
+                        <td>Youth Mental Health Team</td>
+                        <td>Youth Service</td>
+                        <td>Youthline Auckland</td>
+                        <td>referrals@youthline.co.nz</td>
+                    </tr>
+                    <tr data-service="Te Aho Rangi Day Programme">
+                        <td>Te Aho Rangi Day Programme</td>
+                        <td>School Counselling Services</td>
+                        <td>Education Service</td>
+                        <td>Ministry of Education</td>
+                        <td>counselling@moe.govt.nz</td>
+                    </tr>
+                    <tr data-service="Te Paerangi">
+                        <td>Te Paerangi</td>
+                        <td>Adult Community Mental Health</td>
+                        <td>Community Service</td>
+                        <td>Auckland DHB</td>
+                        <td>acmh@adhb.govt.nz</td>
+                    </tr>
+                    <tr data-service="Te Paerangi">
+                        <td>Te Paerangi</td>
+                        <td>Peer Support Network</td>
+                        <td>Peer Service</td>
+                        <td>Like Minds, Like Mine</td>
+                        <td>peers@likeminds.org.nz</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-clipboard-check"></i> 8. Referral Status Reasons</h2>
+                <div class="filter-controls">
+                    <select class="service-filter" id="statusServiceFilter" onchange="filterStatusTable()">
+                        <option value="all">All Services</option>
+                        <option value="Clinical Mental Health">Clinical Mental Health</option>
+                        <option value="Housing & Recovery">Housing & Recovery</option>
+                        <option value="Housing & Recovery Intense Rehab">Housing & Recovery Intense Rehab</option>
+                        <option value="Rapua">Rapua</option>
+                        <option value="Te Aho Rangi Day Programme">Te Aho Rangi Day Programme</option>
+                        <option value="Te Paerangi">Te Paerangi</option>
+                    </select>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Service Name</th>
+                        <th>Referral Status</th>
+                        <th>Code</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody id="statusTableBody">
+                    <tr data-service="Clinical Mental Health">
+                        <td>Clinical Mental Health</td>
+                        <td>Accepted</td>
+                        <td>ACC</td>
+                        <td>Referral accepted and client will be contacted for assessment</td>
+                    </tr>
+                    <tr data-service="Clinical Mental Health">
+                        <td>Clinical Mental Health</td>
+                        <td>Declined</td>
+                        <td>DEC-OOS</td>
+                        <td>Declined - Out of service scope</td>
+                    </tr>
+                    <tr data-service="Clinical Mental Health">
+                        <td>Clinical Mental Health</td>
+                        <td>Declined</td>
+                        <td>DEC-DUP</td>
+                        <td>Declined - Duplicate referral</td>
+                    </tr>
+                    <tr data-service="Housing & Recovery">
+                        <td>Housing & Recovery</td>
+                        <td>Accepted</td>
+                        <td>ACC</td>
+                        <td>Referral accepted and housing assessment scheduled</td>
+                    </tr>
+                    <tr data-service="Housing & Recovery">
+                        <td>Housing & Recovery</td>
+                        <td>Waitlisted</td>
+                        <td>WAIT</td>
+                        <td>Accepted but placed on waitlist due to capacity</td>
+                    </tr>
+                    <tr data-service="Housing & Recovery">
+                        <td>Housing & Recovery</td>
+                        <td>Declined</td>
+                        <td>DEC-NEC</td>
+                        <td>Declined - Not eligible for criteria</td>
+                    </tr>
+                    <tr data-service="Housing & Recovery Intense Rehab">
+                        <td>Housing & Recovery Intense Rehab</td>
+                        <td>Accepted</td>
+                        <td>ACC-URG</td>
+                        <td>Accepted as urgent - High priority placement</td>
+                    </tr>
+                    <tr data-service="Housing & Recovery Intense Rehab">
+                        <td>Housing & Recovery Intense Rehab</td>
+                        <td>Declined</td>
+                        <td>DEC-CLIN</td>
+                        <td>Declined - Clinical criteria not met</td>
+                    </tr>
+                    <tr data-service="Rapua">
+                        <td>Rapua</td>
+                        <td>Accepted</td>
+                        <td>ACC</td>
+                        <td>Referral accepted and cultural assessment arranged</td>
+                    </tr>
+                    <tr data-service="Rapua">
+                        <td>Rapua</td>
+                        <td>Pending</td>
+                        <td>PEND-INFO</td>
+                        <td>Pending - Additional information required</td>
+                    </tr>
+                    <tr data-service="Te Aho Rangi Day Programme">
+                        <td>Te Aho Rangi Day Programme</td>
+                        <td>Accepted</td>
+                        <td>ACC</td>
+                        <td>Referral accepted for day programme assessment</td>
+                    </tr>
+                    <tr data-service="Te Aho Rangi Day Programme">
+                        <td>Te Aho Rangi Day Programme</td>
+                        <td>Declined</td>
+                        <td>DEC-AGE</td>
+                        <td>Declined - Outside age range for service</td>
+                    </tr>
+                    <tr data-service="Te Paerangi">
+                        <td>Te Paerangi</td>
+                        <td>Accepted</td>
+                        <td>ACC</td>
+                        <td>Referral accepted and initial contact scheduled</td>
+                    </tr>
+                    <tr data-service="Te Paerangi">
+                        <td>Te Paerangi</td>
+                        <td>Transferred</td>
+                        <td>TRANS</td>
+                        <td>Transferred to more appropriate service</td>
+                    </tr>
+                    <tr data-service="Te Paerangi">
+                        <td>Te Paerangi</td>
+                        <td>Withdrawn</td>
+                        <td>WITH-CLI</td>
+                        <td>Withdrawn at client request</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="action-required">
+            <h3><i class="fas fa-clipboard-check"></i> 9. Action Required from Director</h3>
+            <p>Please review and provide approval by: <strong>January 11, 2026</strong></p>
+            
+            <div class="checkbox-list">
+                <li>
+                    <input type="checkbox" id="approve-codes">
+                    <label for="approve-codes">Review and confirm recommended T-Codes for each service</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="remove-codes">
+                    <label for="remove-codes">Approve removal of legacy/unused T-Codes</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="validate-breakdown">
+                    <label for="validate-breakdown">Validate proposed Breakdown options for the new dynamic Activity Template</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="approve-referrers">
+                    <label for="approve-referrers">Confirm referrer list for each service</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="approve-status">
+                    <label for="approve-status">Validate referral status reasons and codes</label>
+                </li>
+                <li>
+                    <input type="checkbox" id="sign-off">
+                    <label for="sign-off">Provide final sign-off for implementation</label>
+                </li>
+            </div>
+            
+            <button class="toggle-btn" onclick="submitApproval()" style="background-color: #27ae60;">
+                <i class="fas fa-paper-plane"></i> Submit Approval
+            </button>
+        </div>
+        
+        <div class="contact-info">
+            <div class="contact-card">
+                <h4><i class="fas fa-user"></i> Project Lead</h4>
+                <p><strong>Gourav Saini</strong></p>
+                <p></p>
+                <p></p>
+            </div>
+            <div class="contact-card">
+                <h4><i class="fas fa-hands-helping"></i> Support</h4>
+                <p><strong>Rocky (Pietro Zubiri)</strong></p>
+                <p></p>
+                <p></p>
+            </div>
+            <div class="contact-card">
+                <h4><i class="fas fa-user-graduate"></i> Advisory</h4>
+                <p><strong>Traci-Mae Nathan</strong></p>
+                <p></p>
+                <p></p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>PRIMHD T-Code Alignment Project | Data Pack for Julia Aramoana Team | Prepared by Gourav Saini, 2025</p>
+            <p>Confidential - For Mahitahi Project Stakeholders Review Only</p>
+        </div>
+    </div>
+
+    <script>
+        let usageChart;
+      
+
+
+  
+function initChart() {
+    const ctx = document.getElementById('usageChart').getContext('2d');
+    usageChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['T01 Assessment', 'T02 Treatment', 'T03 Attempt Contact', 'T04 Group', 'T09 Legacy'],
+            datasets: [{
+                label: 'Activity Count',
+                data: [290, 405, 80, 110, 30],
+                backgroundColor: [
+                    'rgba(52, 152, 219, 0.7)',
+                    'rgba(46, 204, 113, 0.7)',
+                    'rgba(155, 89, 182, 0.7)',
+                    'rgba(241, 196, 15, 0.7)',
+                    'rgba(231, 76, 60, 0.7)'
+                ],
+                borderColor: [
+                    'rgb(52, 152, 219)',
+                    'rgb(46, 204, 113)',
+                    'rgb(155, 89, 182)',
+                    'rgb(241, 196, 15)',
+                    'rgb(231, 76, 60)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'T-Code Utilization - All Services (Since July 2024)'
+                },
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Number of Activities'
+                    }
+                }
+            }
+        }
+    });
+}
+        
+
+
+
+        function filterTCodeTable() {
+            const filter = document.getElementById('tcodeServiceFilter').value;
+            const rows = document.querySelectorAll('#tcodeTableBody tr');
+            
+            rows.forEach(row => {
+                if (filter === 'all' || row.getAttribute('data-service') === filter) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+
+
+
+        
+function filterUtilizationTable() {
+    const filter = document.getElementById('utilizationServiceFilter').value;
+    const rows = document.querySelectorAll('#utilizationTableBody tr');
+    
+    rows.forEach(row => {
+        if (filter === 'all' || row.getAttribute('data-service') === filter) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+    
+    // Update the chart based on the filter
+    updateChartData(filter);
+}
+
+function updateChartData(selectedService) {
+    // Define data for each service
+    const serviceData = {
+        'all': {
+            labels: ['T01 Assessment', 'T02 Treatment', 'T03 Attempt Contact', 'T04 Group', 'T09 Legacy'],
+            data: [290, 405, 80, 110, 30]
+        },
+        'Clinical Mental Health': {
+            labels: ['T43 Community Support Contacts', 'T53 Individual treatment attendance'],
+            data: [30, 1]
+        },
+        'Housing & Recovery': {
+            labels: ['T01 Assessment', 'T03 Attempt Contact'],
+            data: [95, 80]
+        },
+        'Housing & Recovery Intense Rehab': {
+            labels: ['T02 Treatment'],
+            data: [200]
+        },
+        'Rapua': {
+            labels: ['T01 Assessment'],
+            data: [45]
+        },
+        'Te Aho Rangi Day Programme': {
+            labels: ['T04 Group'],
+            data: [110]
+        },
+        'Te Paerangi': {
+            labels: ['T02 Treatment', 'T09 Legacy'],
+            data: [85, 30]
+        }
+    };
+    
+    // Get data for selected service or all services
+    const chartData = serviceData[selectedService] || serviceData['all'];
+    
+    // Update chart
+    if (usageChart) {
+        usageChart.data.labels = chartData.labels;
+        usageChart.data.datasets[0].data = chartData.data;
+        
+        // Update chart title based on filter
+        const serviceName = selectedService === 'all' ? 'All Services' : selectedService;
+        usageChart.options.plugins.title.text = `T-Code Utilization - ${serviceName} (Since July 2024)`;
+        
+        usageChart.update();
+    }
+}
+        
+
+
+
+
+
+        function filterMissingTable() {
+            const filter = document.getElementById('missingServiceFilter').value;
+            const rows = document.querySelectorAll('#missingTableBody tr');
+            
+            rows.forEach(row => {
+                if (filter === 'all' || row.getAttribute('data-service') === filter) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        
+        function filterBreakdownTable() {
+            const filter = document.getElementById('breakdownServiceFilter').value;
+            const rows = document.querySelectorAll('#breakdownTableBody tr');
+            
+            rows.forEach(row => {
+                if (filter === 'all' || row.getAttribute('data-service') === filter) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        
+        function filterRecommendationTable() {
+            const filter = document.getElementById('recommendationServiceFilter').value;
+            const addRows = document.querySelectorAll('#recommendationAddTableBody tr');
+            const removeRows = document.querySelectorAll('#recommendationRemoveTableBody tr');
+            
+            addRows.forEach(row => {
+                if (filter === 'all' || row.getAttribute('data-service') === filter) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            removeRows.forEach(row => {
+                if (filter === 'all' || row.getAttribute('data-service') === filter) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        
+        function filterReferrerTable() {
+            const filter = document.getElementById('referrerServiceFilter').value;
+            const rows = document.querySelectorAll('#referrerTableBody tr');
+            
+            rows.forEach(row => {
+                if (filter === 'all' || row.getAttribute('data-service') === filter) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        
+        function filterStatusTable() {
+            const filter = document.getElementById('statusServiceFilter').value;
+            const rows = document.querySelectorAll('#statusTableBody tr');
+            
+            rows.forEach(row => {
+                if (filter === 'all' || row.getAttribute('data-service') === filter) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+        
+        function toggleTable(tableId) {
+            const table = document.getElementById(tableId);
+            if (table.style.display === 'none') {
+                table.style.display = 'block';
+            } else {
+                table.style.display = 'none';
+            }
+        }
+        
+        function toggleChart() {
+            const chartContainer = document.querySelector('.chart-container');
+            if (chartContainer.style.display === 'none') {
+                chartContainer.style.display = 'block';
+                if (!usageChart) {
+                    initChart();
+                } else {
+                    usageChart.resize();
+                }
+            } else {
+                chartContainer.style.display = 'none';
+            }
+        }
+        
+        function submitApproval() {
+            const checkboxes = document.querySelectorAll('.checkbox-list input[type="checkbox"]');
+            let allChecked = true;
+            
+            checkboxes.forEach(checkbox => {
+                if (!checkbox.checked) {
+                    allChecked = false;
+                }
+            });
+            
+            if (allChecked) {
+                alert('Thank you! Your approval has been submitted. The project team will proceed with implementation.');
+            } else {
+                alert('Please complete all required actions before submitting approval.');
+            }
+        }
+        
+        document.getElementById('director-name').addEventListener('click', function() {
+            const newName = prompt('Enter Director Name:', this.textContent);
+            if (newName && newName.trim() !== '') {
+                this.textContent = newName.trim();
+            }
+        });
+        
+        window.onload = function() {
+            initChart();
+        };
+    </script>
+</body>
+</html>
