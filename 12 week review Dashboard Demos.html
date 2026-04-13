@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>12-week review dashboard — layout options</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:system-ui,-apple-system,sans-serif;background:#f8f8f6;color:#1a1a1a;padding:24px;}
+.nav-tabs{display:flex;gap:0;margin-bottom:24px;border-bottom:2px solid #e0e0d8;}
+.nav-tab{padding:10px 20px;font-size:13px;font-weight:500;cursor:pointer;color:#666;border-bottom:2px solid transparent;margin-bottom:-2px;background:none;border-top:none;border-left:none;border-right:none;}
+.nav-tab.active{color:#1a1a1a;border-bottom-color:#1D9E75;}
+.layout{display:none;}
+.layout.active{display:block;}
+.badge-label{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:99px;margin-left:8px;background:#E1F5EE;color:#085041;}
+.badge-rec{background:#E6F1FB;color:#0C447C;}
+.mg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:16px;}
+.mc{background:#f1efe8;border-radius:8px;padding:12px 14px;}
+.mc .lbl{font-size:11px;color:#666;margin-bottom:4px;display:flex;align-items:center;gap:5px;}
+.mc .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.mc .num{font-size:24px;font-weight:500;line-height:1.1;}
+.mc .sub{font-size:11px;color:#888;margin-top:2px;}
+.card{background:#fff;border:0.5px solid rgba(0,0,0,0.12);border-radius:12px;padding:14px;margin-bottom:12px;}
+.ct{font-size:13px;font-weight:500;color:#1a1a1a;margin-bottom:12px;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+th{font-size:11px;font-weight:500;color:#888;text-align:left;padding:5px 8px;border-bottom:0.5px solid rgba(0,0,0,0.1);}
+td{padding:7px 8px;border-bottom:0.5px solid rgba(0,0,0,0.08);color:#1a1a1a;vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:#fafafa;}
+.bv{display:inline-block;font-size:10px;font-weight:500;padding:2px 7px;border-radius:99px;}
+.bon{background:#EAF3DE;color:#27500A;}
+.bod{background:#FCEBEB;color:#A32D2D;}
+.bsn{background:#FAEEDA;color:#633806;}
+.bng{background:#F1EFE8;color:#444441;}
+.hbar{height:12px;border-radius:6px;overflow:hidden;display:flex;margin-bottom:6px;}
+.hs{height:100%;transition:width 0.3s ease;}
+.hleg{display:flex;gap:12px;font-size:11px;color:#888;flex-wrap:wrap;margin-bottom:16px;}
+.hleg span{display:flex;align-items:center;gap:4px;}
+.hleg .sq{width:9px;height:9px;border-radius:2px;}
+.pill{width:18px;height:18px;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:500;}
+.pon{background:#EAF3DE;color:#27500A;}
+.psk{background:#FCEBEB;color:#A32D2D;}
+.row2{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:12px;margin-bottom:12px;}
+.row2eq{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin-bottom:12px;}
+.sec{font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#aaa;margin-bottom:8px;}
+.sl{font-size:11px;color:#aaa;margin-bottom:16px;}
+.aside-layout{display:grid;grid-template-columns:200px minmax(0,1fr);gap:14px;}
+.sidebar{background:#f1efe8;border-radius:12px;padding:14px;}
+.sb-item{padding:10px 12px;border-radius:8px;margin-bottom:4px;}
+.sb-num{font-size:20px;font-weight:500;line-height:1;}
+.sb-lbl{font-size:11px;color:#888;margin-top:2px;}
+.progress-wrap{margin-bottom:12px;}
+.progress-bar{height:8px;border-radius:4px;background:#f1efe8;overflow:hidden;margin-top:4px;}
+.progress-fill{height:100%;border-radius:4px;transition:width 0.3s ease;}
+.krow{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid rgba(0,0,0,0.08);}
+.krow:last-child{border-bottom:none;}
+.kavatar{width:28px;height:28px;border-radius:50%;background:#E6F1FB;color:#0C447C;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0;}
+select{font-size:12px;padding:5px 10px;border-radius:6px;border:0.5px solid rgba(0,0,0,0.2);background:#fff;color:#1a1a1a;cursor:pointer;}
+.fbtn{font-size:11px;padding:3px 10px;border-radius:99px;border:0.5px solid rgba(0,0,0,0.2);background:#fff;color:#666;cursor:pointer;}
+.fbtn.active-filter{background:#e8e8e4;font-weight:500;color:#1a1a1a;}
+.team-pill{font-size:10px;background:#f1efe8;padding:2px 7px;border-radius:4px;color:#666;}
+</style>
+</head>
+<body>
+<div style="max-width:1100px;margin:0 auto;">
+
+<div style="font-size:18px;font-weight:500;color:#1a1a1a;margin-bottom:4px;">Choose your dashboard layout</div>
+<div style="font-size:12px;color:#888;margin-bottom:20px;">Three different designs — same data, different feel. Click a team to see live data change.</div>
+
+<div class="nav-tabs">
+  <button class="nav-tab active" onclick="showLayout('a',this)">Layout A — Command centre<span class="badge-label">Dense · all at once</span></button>
+  <button class="nav-tab" onclick="showLayout('b',this)">Layout B — Sidebar focus<span class="badge-label badge-rec">Recommended</span></button>
+  <button class="nav-tab" onclick="showLayout('c',this)">Layout C — Story flow<span class="badge-label">Simple · top down</span></button>
+  <button class="nav-tab" onclick="showLayout('f',this)">Flattening hui<span class="badge-label" style="background:#FAEEDA;color:#633806;">KPIs &amp; visuals only</span></button>
+</div>
+
+<!-- ===== LAYOUT A ===== -->
+<div class="layout active" id="lay-a">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+    <div><div style="font-size:15px;font-weight:500;">12-week review dashboard</div><div class="sl" id="aSubtitle"></div></div>
+    <select onchange="setTeam(this.value)">
+      <option value="all">All teams</option><option value="North">North</option><option value="South">South</option><option value="Youth">Youth</option>
+    </select>
+  </div>
+  <div class="mg">
+    <div class="mc"><div class="lbl"><span class="dot" style="background:#639922"></span>Up to date</div><div class="num" style="color:#3B6D11" id="aOk"></div><div class="sub" id="aOkS"></div></div>
+    <div class="mc"><div class="lbl"><span class="dot" style="background:#EF9F27"></span>Due soon</div><div class="num" style="color:#854F0B" id="aSoon"></div><div class="sub" id="aSoonS"></div></div>
+    <div class="mc"><div class="lbl"><span class="dot" style="background:#E24B4A"></span>Overdue</div><div class="num" style="color:#A32D2D" id="aOd"></div><div class="sub" id="aOdS"></div></div>
+    <div class="mc"><div class="lbl"><span class="dot" style="background:#888780"></span>No engagement</div><div class="num" style="color:#444441" id="aNe"></div><div class="sub" id="aNeS"></div></div>
+  </div>
+  <div class="hbar"><div class="hs" id="ahOk" style="background:#639922"></div><div class="hs" id="ahSoon" style="background:#EF9F27"></div><div class="hs" id="ahOd" style="background:#E24B4A"></div><div class="hs" id="ahNe" style="background:#B4B2A9"></div></div>
+  <div class="hleg">
+    <span><span class="sq" style="background:#639922"></span>Up to date <b id="aLOk"></b></span>
+    <span><span class="sq" style="background:#EF9F27"></span>Due soon <b id="aLSoon"></b></span>
+    <span><span class="sq" style="background:#E24B4A"></span>Overdue <b id="aLOd"></b></span>
+    <span><span class="sq" style="background:#B4B2A9"></span>No engagement <b id="aLNe"></b></span>
+  </div>
+  <div class="row2">
+    <div class="card">
+      <div class="ct">Reviews collected vs skipped — last 12 months</div>
+      <div style="position:relative;height:160px;"><canvas id="cA1" role="img" aria-label="Stacked bar chart on time vs skipped by month">Monthly completions.</canvas></div>
+      <div style="display:flex;gap:14px;margin-top:8px;font-size:11px;color:#888;">
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:#1D9E75;display:inline-block;"></span>On time <b id="aTotOT" style="margin-left:3px;"></b></span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:#E24B4A;display:inline-block;"></span>Skipped <b id="aTotSk" style="margin-left:3px;"></b></span>
+      </div>
+    </div>
+    <div class="card"><div class="ct">Status by team</div><div style="position:relative;height:160px;"><canvas id="cA2" role="img" aria-label="Stacked bar chart by team">Team breakdown.</canvas></div></div>
+  </div>
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+      <div class="ct" style="margin-bottom:0;">Whaiora needing attention — sorted by urgency</div>
+      <div style="display:flex;gap:6px;">
+        <button class="fbtn active-filter" onclick="setTF('aT','all',this)">All</button>
+        <button class="fbtn" onclick="setTF('aT','overdue',this)">Overdue</button>
+        <button class="fbtn" onclick="setTF('aT','soon',this)">Due soon</button>
+        <button class="fbtn" onclick="setTF('aT','ne',this)">No engagement</button>
+      </div>
+    </div>
+    <table><thead><tr><th>Whaiora</th><th>Kaimahi</th><th>Team</th><th>Status</th><th>Last review</th><th>Days overdue</th><th>Reviews due</th><th>Collected</th><th>Skipped</th><th>History</th></tr></thead>
+    <tbody id="aT"></tbody></table>
+    <div style="margin-top:8px;font-size:11px;color:#aaa;" id="aTCount"></div>
+  </div>
+</div>
+
+<!-- ===== LAYOUT B ===== -->
+<div class="layout" id="lay-b">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+    <div><div style="font-size:15px;font-weight:500;">12-week review dashboard</div><div class="sl" id="bSubtitle"></div></div>
+    <select onchange="setTeam(this.value)">
+      <option value="all">All teams</option><option value="North">North</option><option value="South">South</option><option value="Youth">Youth</option>
+    </select>
+  </div>
+  <div class="aside-layout">
+    <div class="sidebar">
+      <div class="sec" style="margin-bottom:12px;">Caseload status</div>
+      <div class="sb-item" style="border-left:3px solid #639922;border-radius:0 8px 8px 0;"><div style="font-size:11px;color:#666;margin-bottom:2px;">Up to date</div><div class="sb-num" style="color:#3B6D11" id="bOk"></div><div class="sb-lbl" id="bOkS"></div></div>
+      <div class="sb-item" style="border-left:3px solid #EF9F27;border-radius:0 8px 8px 0;margin-top:6px;"><div style="font-size:11px;color:#666;margin-bottom:2px;">Due soon</div><div class="sb-num" style="color:#854F0B" id="bSoon"></div><div class="sb-lbl" id="bSoonS"></div></div>
+      <div class="sb-item" style="border-left:3px solid #E24B4A;border-radius:0 8px 8px 0;margin-top:6px;"><div style="font-size:11px;color:#666;margin-bottom:2px;">Overdue</div><div class="sb-num" style="color:#A32D2D" id="bOd"></div><div class="sb-lbl" id="bOdS"></div></div>
+      <div class="sb-item" style="border-left:3px solid #B4B2A9;border-radius:0 8px 8px 0;margin-top:6px;"><div style="font-size:11px;color:#666;margin-bottom:2px;">No engagement</div><div class="sb-num" style="color:#444441" id="bNe"></div><div class="sb-lbl" id="bNeS"></div></div>
+      <div style="border-top:0.5px solid rgba(0,0,0,0.1);margin:14px 0;"></div>
+      <div class="sec" style="margin-bottom:10px;">By kaimahi</div>
+      <div id="bKaimahi"></div>
+    </div>
+    <div>
+      <div class="hbar" style="margin-bottom:6px;"><div class="hs" id="bhOk" style="background:#639922"></div><div class="hs" id="bhSoon" style="background:#EF9F27"></div><div class="hs" id="bhOd" style="background:#E24B4A"></div><div class="hs" id="bhNe" style="background:#B4B2A9"></div></div>
+      <div class="hleg" style="margin-bottom:12px;"><span><span class="sq" style="background:#639922"></span>Up to date</span><span><span class="sq" style="background:#EF9F27"></span>Due soon</span><span><span class="sq" style="background:#E24B4A"></span>Overdue</span><span><span class="sq" style="background:#B4B2A9"></span>No engagement</span></div>
+      <div class="row2eq">
+        <div class="card"><div class="ct">Monthly trend</div><div style="position:relative;height:140px;"><canvas id="cB1" role="img" aria-label="Line chart monthly completions">Trend.</canvas></div></div>
+        <div class="card">
+          <div class="ct">Collection rate</div>
+          <div class="progress-wrap"><div style="display:flex;justify-content:space-between;font-size:11px;color:#888;"><span>On time</span><span style="color:#27500A;font-weight:500" id="bOTP"></span></div><div class="progress-bar"><div class="progress-fill" id="bOTF" style="background:#1D9E75;"></div></div></div>
+          <div class="progress-wrap"><div style="display:flex;justify-content:space-between;font-size:11px;color:#888;"><span>Skipped</span><span style="color:#A32D2D;font-weight:500" id="bSkP"></span></div><div class="progress-bar"><div class="progress-fill" id="bSkF" style="background:#E24B4A;"></div></div></div>
+          <div style="border-top:0.5px solid rgba(0,0,0,0.08);padding-top:10px;margin-top:10px;"><div style="font-size:11px;color:#888;margin-bottom:4px;">Total collected</div><div style="font-size:22px;font-weight:500;" id="bTotC"></div><div style="font-size:11px;color:#888;margin-top:2px;" id="bAvg"></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><div class="ct" style="margin-bottom:0;">Action list — overdue &amp; due soon</div><div style="font-size:11px;color:#888;" id="bAcCt"></div></div>
+        <table><thead><tr><th>Whaiora</th><th>Kaimahi</th><th>Team</th><th>Status</th><th>Last review</th><th>Days overdue</th><th>Reviews due</th><th>Skipped</th><th>History</th></tr></thead>
+        <tbody id="bT"></tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LAYOUT C ===== -->
+<div class="layout" id="lay-c">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+    <div><div style="font-size:15px;font-weight:500;">12-week review dashboard</div><div class="sl" id="cSubtitle"></div></div>
+    <select onchange="setTeam(this.value)">
+      <option value="all">All teams</option><option value="North">North</option><option value="South">South</option><option value="Youth">Youth</option>
+    </select>
+  </div>
+  <div class="sec">Step 1 — how is the caseload sitting right now?</div>
+  <div class="mg" style="margin-bottom:8px;">
+    <div class="mc"><div class="lbl"><span class="dot" style="background:#639922"></span>Up to date</div><div class="num" style="color:#3B6D11" id="cOk"></div><div class="sub" id="cOkS"></div></div>
+    <div class="mc"><div class="lbl"><span class="dot" style="background:#EF9F27"></span>Due soon</div><div class="num" style="color:#854F0B" id="cSoon"></div><div class="sub" id="cSoonS"></div></div>
+    <div class="mc"><div class="lbl"><span class="dot" style="background:#E24B4A"></span>Overdue</div><div class="num" style="color:#A32D2D" id="cOd"></div><div class="sub" id="cOdS"></div></div>
+    <div class="mc"><div class="lbl"><span class="dot" style="background:#888780"></span>No engagement</div><div class="num" style="color:#444441" id="cNe"></div><div class="sub" id="cNeS"></div></div>
+  </div>
+  <div class="hbar" style="margin-bottom:6px;"><div class="hs" id="chOk" style="background:#639922"></div><div class="hs" id="chSoon" style="background:#EF9F27"></div><div class="hs" id="chOd" style="background:#E24B4A"></div><div class="hs" id="chNe" style="background:#B4B2A9"></div></div>
+  <div class="hleg"><span><span class="sq" style="background:#639922"></span>Up to date <b id="cLOk"></b></span><span><span class="sq" style="background:#EF9F27"></span>Due soon <b id="cLSoon"></b></span><span><span class="sq" style="background:#E24B4A"></span>Overdue <b id="cLOd"></b></span><span><span class="sq" style="background:#B4B2A9"></span>No engagement <b id="cLNe"></b></span></div>
+
+  <div class="sec">Step 2 — are things getting better or worse?</div>
+  <div class="card" style="margin-bottom:12px;">
+    <div class="ct">Reviews collected on time vs skipped — last 12 months</div>
+    <div style="position:relative;height:160px;"><canvas id="cC1" role="img" aria-label="Stacked bar on time vs skipped">Monthly.</canvas></div>
+    <div style="display:flex;gap:14px;margin-top:8px;font-size:11px;color:#888;">
+      <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:#1D9E75;display:inline-block;"></span>On time</span>
+      <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:#E24B4A;display:inline-block;"></span>Skipped</span>
+      <span style="margin-left:auto;color:#aaa;">Collected: <b id="cTotOT"></b> · Skipped: <b id="cTotSk"></b></span>
+    </div>
+  </div>
+
+  <div class="sec">Step 3 — which team and who needs action?</div>
+  <div class="row2eq" style="margin-bottom:12px;">
+    <div class="card"><div class="ct">Status by team</div><div style="position:relative;height:150px;"><canvas id="cC2" role="img" aria-label="Stacked bar by team">Teams.</canvas></div></div>
+    <div class="card"><div class="ct">Kaimahi summary</div>
+      <table><thead><tr><th>Kaimahi</th><th>Team</th><th>Caseload</th><th>Overdue</th><th>Skipped</th></tr></thead><tbody id="cKT"></tbody></table>
+    </div>
+  </div>
+
+  <div class="sec">Step 4 — individual whaiora action list</div>
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+      <div class="ct" style="margin-bottom:0;">Sorted by urgency — overdue first</div>
+      <div style="display:flex;gap:6px;">
+        <button class="fbtn active-filter" onclick="setTF('cT','all',this)">All</button>
+        <button class="fbtn" onclick="setTF('cT','overdue',this)">Overdue</button>
+        <button class="fbtn" onclick="setTF('cT','soon',this)">Due soon</button>
+        <button class="fbtn" onclick="setTF('cT','ne',this)">No engagement</button>
+      </div>
+    </div>
+    <table><thead><tr><th>Whaiora</th><th>Kaimahi</th><th>Team</th><th>Status</th><th>Goals created</th><th>Last review</th><th>Days overdue</th><th>Reviews due</th><th>On time</th><th>Skipped</th><th>History</th></tr></thead>
+    <tbody id="cT"></tbody></table>
+    <div style="margin-top:8px;font-size:11px;color:#aaa;" id="cTCount"></div>
+  </div>
+</div>
+
+</div>
+
+<!-- ===== LAYOUT F — FLATTENING HUI ===== -->
+<div class="layout" id="lay-f">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+    <div>
+      <div style="font-size:15px;font-weight:500;">Flattening hui — 12-week review snapshot</div>
+      <div class="sl" id="fSubtitle"></div>
+    </div>
+    <select onchange="setTeam(this.value)">
+      <option value="all">All teams</option><option value="North">North</option><option value="South">South</option><option value="Youth">Youth</option>
+    </select>
+  </div>
+
+  <!-- KPI row 1: status counts -->
+  <div class="sec">Current caseload status</div>
+  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:8px;">
+    <div style="background:#EAF3DE;border-radius:12px;padding:16px 18px;">
+      <div style="font-size:11px;color:#3B6D11;margin-bottom:4px;display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:#639922;display:inline-block;"></span>Up to date</div>
+      <div style="font-size:36px;font-weight:500;color:#27500A;line-height:1;" id="fOk"></div>
+      <div style="font-size:12px;color:#3B6D11;margin-top:4px;" id="fOkP"></div>
+    </div>
+    <div style="background:#FAEEDA;border-radius:12px;padding:16px 18px;">
+      <div style="font-size:11px;color:#854F0B;margin-bottom:4px;display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:#EF9F27;display:inline-block;"></span>Due soon</div>
+      <div style="font-size:36px;font-weight:500;color:#633806;line-height:1;" id="fSoon"></div>
+      <div style="font-size:12px;color:#854F0B;margin-top:4px;" id="fSoonP"></div>
+    </div>
+    <div style="background:#FCEBEB;border-radius:12px;padding:16px 18px;">
+      <div style="font-size:11px;color:#A32D2D;margin-bottom:4px;display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:#E24B4A;display:inline-block;"></span>Overdue</div>
+      <div style="font-size:36px;font-weight:500;color:#791F1F;line-height:1;" id="fOd"></div>
+      <div style="font-size:12px;color:#A32D2D;margin-top:4px;" id="fOdP"></div>
+    </div>
+    <div style="background:#F1EFE8;border-radius:12px;padding:16px 18px;">
+      <div style="font-size:11px;color:#5F5E5A;margin-bottom:4px;display:flex;align-items:center;gap:5px;"><span style="width:8px;height:8px;border-radius:50%;background:#888780;display:inline-block;"></span>No engagement</div>
+      <div style="font-size:36px;font-weight:500;color:#444441;line-height:1;" id="fNe"></div>
+      <div style="font-size:12px;color:#5F5E5A;margin-top:4px;" id="fNeP"></div>
+    </div>
+  </div>
+
+  <!-- caseload health bar -->
+  <div class="hbar" style="height:16px;margin-bottom:6px;">
+    <div class="hs" id="fhOk" style="background:#639922"></div>
+    <div class="hs" id="fhSoon" style="background:#EF9F27"></div>
+    <div class="hs" id="fhOd" style="background:#E24B4A"></div>
+    <div class="hs" id="fhNe" style="background:#B4B2A9"></div>
+  </div>
+  <div class="hleg" style="margin-bottom:20px;">
+    <span><span class="sq" style="background:#639922"></span>Up to date</span>
+    <span><span class="sq" style="background:#EF9F27"></span>Due soon</span>
+    <span><span class="sq" style="background:#E24B4A"></span>Overdue</span>
+    <span><span class="sq" style="background:#B4B2A9"></span>No engagement</span>
+  </div>
+
+  <!-- KPI row 2: collection stats -->
+  <div class="sec">Review collection stats</div>
+  <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:20px;">
+    <div class="mc"><div class="lbl">Total collected</div><div class="num" id="fTotC"></div><div class="sub">all time</div></div>
+    <div class="mc"><div class="lbl">Total skipped</div><div class="num" style="color:#A32D2D" id="fTotSk"></div><div class="sub">missed window</div></div>
+    <div class="mc"><div class="lbl">On-time rate</div><div class="num" style="color:#27500A" id="fOtRate"></div><div class="sub">of all reviews</div></div>
+    <div class="mc"><div class="lbl">Avg reviews / whaiora</div><div class="num" id="fAvg"></div><div class="sub">since goals created</div></div>
+  </div>
+
+  <!-- Chart row 1: monthly bar + line trend -->
+  <div style="display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:12px;margin-bottom:12px;">
+    <div class="card">
+      <div class="ct">Reviews collected vs skipped — monthly</div>
+      <div style="position:relative;height:200px;"><canvas id="fBarMonthly" role="img" aria-label="Stacked bar on time vs skipped monthly">Monthly.</canvas></div>
+      <div style="display:flex;gap:14px;margin-top:8px;font-size:11px;color:#888;">
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:#1D9E75;display:inline-block;"></span>On time</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:#E24B4A;display:inline-block;"></span>Skipped</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ct">Completion trend — last 12 months</div>
+      <div style="position:relative;height:200px;"><canvas id="fLineTrend" role="img" aria-label="Line chart completion trend">Trend.</canvas></div>
+      <div style="margin-top:8px;font-size:11px;color:#888;">Weekly reviews completed over time</div>
+    </div>
+  </div>
+
+  <!-- Chart row 2: donut + team bar + progress bars -->
+  <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);gap:12px;margin-bottom:12px;">
+
+    <!-- donut -->
+    <div class="card" style="display:flex;flex-direction:column;align-items:center;">
+      <div class="ct" style="align-self:flex-start;">Status split</div>
+      <div style="position:relative;height:180px;width:180px;">
+        <canvas id="fDonut" role="img" aria-label="Donut chart status split">Status split.</canvas>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:12px;width:100%;font-size:11px;">
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:#639922;display:inline-block;"></span>Up to date</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:#EF9F27;display:inline-block;"></span>Due soon</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:#E24B4A;display:inline-block;"></span>Overdue</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:#B4B2A9;display:inline-block;"></span>No engagement</span>
+      </div>
+    </div>
+
+    <!-- team bar -->
+    <div class="card">
+      <div class="ct">Status by team</div>
+      <div style="position:relative;height:200px;"><canvas id="fTeamBar" role="img" aria-label="Stacked bar by team">Team breakdown.</canvas></div>
+    </div>
+
+    <!-- progress bars -->
+    <div class="card">
+      <div class="ct">Status breakdown (%)</div>
+      <div style="margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:#3B6D11;font-weight:500;">Up to date</span><span id="fPbOkLbl" style="color:#888;font-size:11px;"></span></div>
+        <div class="progress-bar" style="height:10px;"><div class="progress-fill" id="fPbOk" style="background:#639922;"></div></div>
+      </div>
+      <div style="margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:#854F0B;font-weight:500;">Due soon</span><span id="fPbSoonLbl" style="color:#888;font-size:11px;"></span></div>
+        <div class="progress-bar" style="height:10px;"><div class="progress-fill" id="fPbSoon" style="background:#EF9F27;"></div></div>
+      </div>
+      <div style="margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:#A32D2D;font-weight:500;">Overdue</span><span id="fPbOdLbl" style="color:#888;font-size:11px;"></span></div>
+        <div class="progress-bar" style="height:10px;"><div class="progress-fill" id="fPbOd" style="background:#E24B4A;"></div></div>
+      </div>
+      <div style="margin-bottom:20px;">
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:#5F5E5A;font-weight:500;">No engagement</span><span id="fPbNeLbl" style="color:#888;font-size:11px;"></span></div>
+        <div class="progress-bar" style="height:10px;"><div class="progress-fill" id="fPbNe" style="background:#B4B2A9;"></div></div>
+      </div>
+      <div style="border-top:0.5px solid rgba(0,0,0,0.08);padding-top:14px;">
+        <div style="font-size:11px;color:#888;margin-bottom:8px;font-weight:500;">Collection rate</div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:#27500A;">On time</span><span id="fOtRateLbl" style="color:#888;font-size:11px;"></span></div>
+          <div class="progress-bar" style="height:10px;"><div class="progress-fill" id="fPbOT" style="background:#1D9E75;"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:#A32D2D;">Skipped</span><span id="fSkRateLbl" style="color:#888;font-size:11px;"></span></div>
+          <div class="progress-bar" style="height:10px;"><div class="progress-fill" id="fPbSk" style="background:#E24B4A;"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Kaimahi heatmap -->
+  <div class="card">
+    <div class="ct">Kaimahi caseload health — at a glance</div>
+    <div id="fHeatmap"></div>
+    <div style="display:flex;gap:14px;margin-top:12px;font-size:11px;color:#888;border-top:0.5px solid rgba(0,0,0,0.06);padding-top:10px;">
+      <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:#639922;display:inline-block;"></span>Up to date</span>
+      <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:#EF9F27;display:inline-block;"></span>Due soon</span>
+      <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:#E24B4A;display:inline-block;"></span>Overdue</span>
+      <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:#B4B2A9;display:inline-block;"></span>No engagement</span>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const TEAMS = ['North','South','Youth'];
+const KM_BY_TEAM = {
+  North: ['Aroha T.','Mere W.','Rangi P.'],
+  South: ['Tama H.','Hine K.','Joel F.'],
+  Youth: ['Wiremu N.','Anika M.','Piripi S.']
+};
+const ALL_KM = Object.values(KM_BY_TEAM).flat();
+
+const FIRST=['Tūhoe','Kahurangi','Parata','Hinemoa','Tāmati','Arohanui','Reweti','Maia','Kohi','Ihaka','Rāwiri','Waimārie','Kōwhai','Hēmi','Ataahua','Rongo','Kerehoma','Waiata','Nēpia','Tiaki','Ruia','Hinemoana','Kawerau','Rangiatea','Pōhatu','Ngāpō','Māhina','Tūhou','Aroaro','Taini'];
+const LAST =['Ngāta','Parata','Māhaki','Ngāti','Māhoe','Tūhia','Tūwhai','Māpou','Rātā','Tūhoe','Hēmi','Rongo','Pāpaka','Kāhui','Mānia'];
+const ST_POOL=['ok','ok','ok','ok','ok','soon','soon','overdue','overdue','overdue','ne'];
+
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
+function fmt(d){return d.toLocaleDateString('en-NZ',{day:'2-digit',month:'short',year:'numeric'});}
+
+function genW(i){
+  const team=TEAMS[i%TEAMS.length];
+  const kmList=KM_BY_TEAM[team];
+  const kaimahi=kmList[i%kmList.length];
+  const name=FIRST[i%FIRST.length]+' '+LAST[i%LAST.length].charAt(0)+'.';
+  const st=ST_POOL[i%ST_POOL.length];
+  const goalsDate=addDays(new Date('2022-06-01'),rnd(0,700));
+  const due=rnd(3,9);
+  const skipped=st==='overdue'?rnd(1,3):rnd(0,1);
+  const collected=due-skipped;
+  const onTime=Math.max(0,collected-(st==='overdue'?rnd(0,2):0));
+  const daysOD=st==='overdue'?rnd(5,140):st==='soon'?-rnd(1,13):null;
+  const lastRev=st==='ok'?fmt(addDays(new Date(),rnd(-70,-5))):st==='overdue'?fmt(addDays(new Date(),-(rnd(85,220)))):st==='soon'?fmt(addDays(new Date(),-(rnd(70,82)))):'—';
+  const pills=Array.from({length:due},(_,j)=>j<skipped?'sk':'on');
+  return{name,team,kaimahi,st,gd:fmt(goalsDate),lastRev,daysOD,due,collected,onTime,skipped,pills};
+}
+
+const ALL=Array.from({length:543},(_,i)=>genW(i));
+
+/* charts */
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const BASE_OT=[165,148,172,160,183,170,195,188,201,176,192,243];
+const BASE_SK=[42,38,45,39,51,47,55,50,58,44,53,66];
+const BASE_TR=[18,22,19,25,21,28,24,30,26,32,29,35];
+const MULT={all:1,North:0.36,South:0.34,Youth:0.30};
+
+let charts={};
+
+function scaleArr(base,m){return base.map(v=>Math.round(v*m));}
+
+function upsertBarChart(id,onT,sk){
+  if(charts[id]){charts[id].data.datasets[0].data=onT;charts[id].data.datasets[1].data=sk;charts[id].update();return;}
+  charts[id]=new Chart(document.getElementById(id),{type:'bar',data:{labels:MONTHS,datasets:[{label:'On time',data:onT,backgroundColor:'#1D9E75',borderWidth:0},{label:'Skipped',data:sk,backgroundColor:'#E24B4A',borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{stacked:true,ticks:{font:{size:10},autoSkip:false,maxRotation:0},grid:{display:false}},y:{stacked:true,ticks:{font:{size:10}},grid:{color:'rgba(0,0,0,0.05)'},beginAtZero:true}}}});
+}
+function upsertTeamChart(id,teamFilter){
+  const labels=teamFilter==='all'?TEAMS:[teamFilter];
+  const ds=[
+    {label:'Up to date',data:labels.map(t=>ALL.filter(w=>w.team===t&&w.st==='ok').length),backgroundColor:'#639922',borderWidth:0},
+    {label:'Due soon',data:labels.map(t=>ALL.filter(w=>w.team===t&&w.st==='soon').length),backgroundColor:'#EF9F27',borderWidth:0},
+    {label:'Overdue',data:labels.map(t=>ALL.filter(w=>w.team===t&&w.st==='overdue').length),backgroundColor:'#E24B4A',borderWidth:0},
+    {label:'No engagement',data:labels.map(t=>ALL.filter(w=>w.team===t&&w.st==='ne').length),backgroundColor:'#B4B2A9',borderWidth:0},
+  ];
+  if(charts[id]){charts[id].data.labels=labels;charts[id].data.datasets=ds;charts[id].update();return;}
+  charts[id]=new Chart(document.getElementById(id),{type:'bar',data:{labels,datasets:ds},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{stacked:true,ticks:{font:{size:11}},grid:{display:false}},y:{stacked:true,ticks:{font:{size:10}},grid:{color:'rgba(0,0,0,0.05)'},beginAtZero:true}}}});
+}
+function upsertLineChart(id,m){
+  const d=scaleArr(BASE_TR,m);
+  if(charts[id]){charts[id].data.datasets[0].data=d;charts[id].update();return;}
+  charts[id]=new Chart(document.getElementById(id),{type:'line',data:{labels:MONTHS,datasets:[{label:'Collected',data:d,borderColor:'#1D9E75',backgroundColor:'#E1F5EE',fill:true,tension:0.3,pointRadius:2,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:10},autoSkip:false,maxRotation:0},grid:{display:false}},y:{ticks:{font:{size:10}},grid:{color:'rgba(0,0,0,0.05)'},beginAtZero:true}}}});
+}
+
+/* helpers */
+function pct(n,t){return t===0?'0%':Math.round(n/t*100)+'%';}
+function st(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+function sw(id,v){const e=document.getElementById(id);if(e)e.style.width=v;}
+function setBar(id,n,t){sw(id,(t===0?0:Math.round(n/t*100))+'%');}
+
+function badge(s){return s==='overdue'?'<span class="bv bod">Overdue</span>':s==='soon'?'<span class="bv bsn">Due soon</span>':s==='ok'?'<span class="bv bon">Up to date</span>':'<span class="bv bng">No engagement</span>';}
+function pills(p){return p.map(x=>`<span class="pill ${x==='sk'?'psk':'pon'}">${x==='sk'?'S':'C'}</span>`).join('');}
+function daysH(d){if(d===null)return'—';if(d>0)return`<span style="color:#A32D2D;font-weight:500">+${d}d</span>`;return`<span style="color:#854F0B">${Math.abs(d)}d left</span>`;}
+
+/* table filter state */
+const TF={aT:'all',cT:'all'};
+function setTF(tid,f,btn){
+  TF[tid]=f;
+  btn.closest('.card').querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active-filter'));
+  btn.classList.add('active-filter');
+  render();
+}
+
+/* global team state */
+let TEAM='all';
+function setTeam(v){
+  TEAM=v;
+  // sync all selects
+  document.querySelectorAll('select').forEach(s=>s.value=v);
+  render();
+}
+
+function sortedData(data){
+  return[...data].sort((a,b)=>{const o={overdue:0,soon:1,ne:2,ok:3};return o[a.st]-o[b.st]||(b.daysOD||0)-(a.daysOD||0);});
+}
+function filterRows(data,f){
+  if(f==='all')return data;
+  if(f==='overdue')return data.filter(w=>w.st==='overdue');
+  if(f==='soon')return data.filter(w=>w.st==='soon');
+  if(f==='ne')return data.filter(w=>w.st==='ne');
+  return data;
+}
+
+function renderTable(tbodyId,data,f,showGoals,countId){
+  const sorted=sortedData(data);
+  const rows=filterRows(sorted,f).slice(0,25);
+  document.getElementById(tbodyId).innerHTML=rows.map(r=>`<tr>
+    <td style="font-weight:500">${r.name}</td>
+    <td style="color:#666">${r.kaimahi}</td>
+    <td><span class="team-pill">${r.team}</span></td>
+    <td>${badge(r.st)}</td>
+    ${showGoals?`<td style="color:#888;font-size:11px">${r.gd}</td>`:''}
+    <td style="color:#888">${r.lastRev}</td>
+    <td>${daysH(r.daysOD)}</td>
+    <td>${r.due}</td>
+    ${showGoals?`<td style="color:#27500A">${r.onTime}</td>`:''}
+    <td>${r.collected}</td>
+    <td style="color:${r.skipped>0?'#A32D2D':'#1a1a1a'}">${r.skipped}</td>
+    <td style="display:flex;gap:2px;flex-wrap:wrap;padding-top:4px;">${pills(r.pills)}</td>
+  </tr>`).join('');
+  if(countId) st(countId,`Showing ${rows.length} of ${filterRows(sorted,f).length}`);
+}
+
+function renderKaimahiSidebar(data){
+  const kms=TEAM==='all'?ALL_KM:KM_BY_TEAM[TEAM]||ALL_KM;
+  document.getElementById('bKaimahi').innerHTML=kms.map(k=>{
+    const kd=data.filter(w=>w.kaimahi===k);
+    const od=kd.filter(w=>w.st==='overdue').length;
+    const sn=kd.filter(w=>w.st==='soon').length;
+    const ini=k.split(' ').map(p=>p[0]).join('').toUpperCase().slice(0,2);
+    const b=od>0?`<span class="bv bod">${od} OD</span>`:sn>0?`<span class="bv bsn">${sn} DS</span>`:`<span class="bv bon">OK</span>`;
+    return`<div class="krow"><div style="display:flex;align-items:center;gap:7px;"><div class="kavatar">${ini}</div><span style="font-size:12px">${k}</span></div>${b}</div>`;
+  }).join('');
+}
+
+function renderKaimahiTable(data){
+  const kms=TEAM==='all'?ALL_KM:KM_BY_TEAM[TEAM]||ALL_KM;
+  document.getElementById('cKT').innerHTML=kms.map(k=>{
+    const kd=data.filter(w=>w.kaimahi===k);
+    const od=kd.filter(w=>w.st==='overdue').length;
+    const sk=kd.reduce((a,w)=>a+w.skipped,0);
+    const t=Object.entries(KM_BY_TEAM).find(([,a])=>a.includes(k))?.[0]||'';
+    const ini=k.split(' ').map(p=>p[0]).join('').toUpperCase().slice(0,2);
+    return`<tr><td><div style="display:flex;align-items:center;gap:6px;"><div class="kavatar">${ini}</div>${k}</div></td><td style="color:#666">${t}</td><td>${kd.length}</td><td style="color:${od>0?'#A32D2D':'#27500A'};font-weight:500">${od}</td><td style="color:${sk>0?'#A32D2D':'#1a1a1a'}">${sk}</td></tr>`;
+  }).join('');
+}
+
+function render(){
+  const data=TEAM==='all'?ALL:ALL.filter(w=>w.team===TEAM);
+  const total=data.length;
+  const okN=data.filter(w=>w.st==='ok').length;
+  const snN=data.filter(w=>w.st==='soon').length;
+  const odN=data.filter(w=>w.st==='overdue').length;
+  const neN=data.filter(w=>w.st==='ne').length;
+  const totColl=data.reduce((a,w)=>a+w.collected,0);
+  const totSkip=data.reduce((a,w)=>a+w.skipped,0);
+  const totRev=totColl+totSkip;
+  const otP=totRev>0?Math.round(totColl/totRev*100):0;
+  const skP=100-otP;
+  const avg=total>0?(totColl/total).toFixed(1):'0';
+  const m=MULT[TEAM]||1;
+  const onTS=scaleArr(BASE_OT,m);
+  const skS=scaleArr(BASE_SK,m);
+  const sub=TEAM==='all'?`${total} whaiora · all teams · updated today`:`${total} whaiora · ${TEAM} team · updated today`;
+
+  /* A */
+  st('aSubtitle',sub);
+  st('aOk',okN);st('aOkS',pct(okN,total)+' of caseload');
+  st('aSoon',snN);st('aSoonS',pct(snN,total)+' · within 2 weeks');
+  st('aOd',odN);st('aOdS',pct(odN,total)+' of caseload');
+  st('aNe',neN);st('aNeS',pct(neN,total)+' of caseload');
+  setBar('ahOk',okN,total);setBar('ahSoon',snN,total);setBar('ahOd',odN,total);setBar('ahNe',neN,total);
+  st('aLOk',pct(okN,total));st('aLSoon',pct(snN,total));st('aLOd',pct(odN,total));st('aLNe',pct(neN,total));
+  st('aTotOT',totColl.toLocaleString());st('aTotSk',totSkip.toLocaleString());
+  upsertBarChart('cA1',onTS,skS);
+  upsertTeamChart('cA2',TEAM);
+  renderTable('aT',data,TF['aT'],false,'aTCount');
+
+  /* B */
+  st('bSubtitle',sub);
+  st('bOk',okN);st('bOkS',pct(okN,total));
+  st('bSoon',snN);st('bSoonS',pct(snN,total));
+  st('bOd',odN);st('bOdS',pct(odN,total));
+  st('bNe',neN);st('bNeS',pct(neN,total));
+  setBar('bhOk',okN,total);setBar('bhSoon',snN,total);setBar('bhOd',odN,total);setBar('bhNe',neN,total);
+  st('bOTP',otP+'%');st('bSkP',skP+'%');
+  sw('bOTF',otP+'%');sw('bSkF',skP+'%');
+  st('bTotC',totColl.toLocaleString());st('bAvg','avg '+avg+' per whaiora');
+  upsertLineChart('cB1',m);
+  const actionRows=data.filter(w=>w.st==='overdue'||w.st==='soon');
+  st('bAcCt',actionRows.length+' whaiora');
+  renderTable('bT',actionRows,'action',false,null);
+  renderKaimahiSidebar(data);
+
+  /* C */
+  st('cSubtitle',sub);
+  st('cOk',okN);st('cOkS',pct(okN,total));
+  st('cSoon',snN);st('cSoonS',pct(snN,total));
+  st('cOd',odN);st('cOdS',pct(odN,total));
+  st('cNe',neN);st('cNeS',pct(neN,total));
+  setBar('chOk',okN,total);setBar('chSoon',snN,total);setBar('chOd',odN,total);setBar('chNe',neN,total);
+  st('cLOk',pct(okN,total));st('cLSoon',pct(snN,total));st('cLOd',pct(odN,total));st('cLNe',pct(neN,total));
+  st('cTotOT',totColl.toLocaleString());st('cTotSk',totSkip.toLocaleString()+' ('+skP+'%)');
+  upsertBarChart('cC1',onTS,skS);
+  upsertTeamChart('cC2',TEAM);
+  renderKaimahiTable(data);
+  renderTable('cT',data,TF['cT'],true,'cTCount');
+
+  /* F — Flattening Hui */
+  renderFlatteningHui(data,total,okN,snN,odN,neN,totColl,totSkip,totRev,otP,skP,avg,m,onTS,skS);
+}
+
+function renderFlatteningHui(data,total,okN,snN,odN,neN,totColl,totSkip,totRev,otP,skP,avg,m,onTS,skS){
+  st('fSubtitle',TEAM==='all'?`${total} whaiora · all teams · updated today`:`${total} whaiora · ${TEAM} team · updated today`);
+
+  /* KPI row 1 — status */
+  st('fOk',okN); st('fOkP',pct(okN,total));
+  st('fSoon',snN); st('fSoonP',pct(snN,total));
+  st('fOd',odN); st('fOdP',pct(odN,total));
+  st('fNe',neN); st('fNeP',pct(neN,total));
+
+  /* KPI row 2 — collection */
+  st('fTotC',totColl.toLocaleString());
+  st('fTotSk',totSkip.toLocaleString());
+  st('fOtRate',otP+'%');
+  st('fAvg',avg);
+
+  /* health bar */
+  setBar('fhOk',okN,total); setBar('fhSoon',snN,total); setBar('fhOd',odN,total); setBar('fhNe',neN,total);
+
+  /* progress bars */
+  sw('fPbOk', pct(okN,total)); sw('fPbSoon', pct(snN,total)); sw('fPbOd', pct(odN,total)); sw('fPbNe', pct(neN,total));
+  sw('fPbOT', otP+'%'); sw('fPbSk', skP+'%');
+  st('fPbOkLbl', pct(okN,total)); st('fPbSoonLbl', pct(snN,total)); st('fPbOdLbl', pct(odN,total)); st('fPbNeLbl', pct(neN,total));
+  st('fOtRateLbl', otP+'%'); st('fSkRateLbl', skP+'%');
+
+  /* charts */
+  upsertBarChart('fBarMonthly', onTS, skS);
+  upsertLineChart('fLineTrend', m);
+  upsertTeamChart('fTeamBar', TEAM);
+
+  /* donut — status split */
+  if(charts['fDonut']){
+    charts['fDonut'].data.datasets[0].data=[okN,snN,odN,neN];
+    charts['fDonut'].update();
+  } else {
+    charts['fDonut']=new Chart(document.getElementById('fDonut'),{
+      type:'doughnut',
+      data:{labels:['Up to date','Due soon','Overdue','No engagement'],
+            datasets:[{data:[okN,snN,odN,neN],backgroundColor:['#639922','#EF9F27','#E24B4A','#B4B2A9'],borderWidth:2,borderColor:'#fff'}]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'68%',
+        plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.label}: ${c.raw} (${pct(c.raw,total)})`}}}}
+    });
+  }
+
+  /* kaimahi heatmap */
+  const kms=TEAM==='all'?ALL_KM:KM_BY_TEAM[TEAM]||ALL_KM;
+  const heatRows=kms.map(k=>{
+    const kd=data.filter(w=>w.kaimahi===k);
+    const od=kd.filter(w=>w.st==='overdue').length;
+    const sn=kd.filter(w=>w.st==='soon').length;
+    const ok=kd.filter(w=>w.st==='ok').length;
+    const ne=kd.filter(w=>w.st==='ne').length;
+    const ini=k.split(' ').map(p=>p[0]).join('').toUpperCase().slice(0,2);
+    const t=Object.entries(KM_BY_TEAM).find(([,a])=>a.includes(k))?.[0]||'';
+    const maxW=kd.length||1;
+    return`<div style="margin-bottom:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">
+        <div style="display:flex;align-items:center;gap:7px;">
+          <div class="kavatar">${ini}</div>
+          <div><div style="font-size:12px;font-weight:500">${k}</div><div style="font-size:10px;color:#888">${t} team · ${kd.length} whaiora</div></div>
+        </div>
+        <div style="display:flex;gap:6px;font-size:11px;">
+          ${od>0?`<span class="bv bod">${od} overdue</span>`:''}
+          ${sn>0?`<span class="bv bsn">${sn} due soon</span>`:''}
+          ${od===0&&sn===0?`<span class="bv bon">All clear</span>`:''}
+        </div>
+      </div>
+      <div style="height:8px;border-radius:4px;overflow:hidden;display:flex;">
+        <div style="width:${Math.round(ok/maxW*100)}%;background:#639922;height:100%;"></div>
+        <div style="width:${Math.round(sn/maxW*100)}%;background:#EF9F27;height:100%;"></div>
+        <div style="width:${Math.round(od/maxW*100)}%;background:#E24B4A;height:100%;"></div>
+        <div style="width:${Math.round(ne/maxW*100)}%;background:#B4B2A9;height:100%;"></div>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('fHeatmap').innerHTML=heatRows;
+}
+
+function showLayout(id,el){
+  document.querySelectorAll('.layout').forEach(l=>l.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('lay-'+id).classList.add('active');
+  el.classList.add('active');
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
