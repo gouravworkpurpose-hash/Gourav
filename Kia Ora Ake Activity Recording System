@@ -1,0 +1,2551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kia Ora Ake - Activity Recording System</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #0d9488;
+    --teal-light: #14b8a6;
+    --teal-dark: #0f766e;
+    --teal-faint: #f0fdfa;
+    --teal-muted: #ccfbf1;
+    --slate: #0f172a;
+    --slate-700: #334155;
+    --slate-500: #64748b;
+    --slate-300: #cbd5e1;
+    --slate-100: #f1f5f9;
+    --slate-50: #f8fafc;
+    --white: #ffffff;
+    --danger: #ef4444;
+    --danger-light: #fef2f2;
+    --warning: #f59e0b;
+    --warning-light: #fffbeb;
+    --success: #10b981;
+    --success-light: #f0fdf4;
+    --radius: 10px;
+    --radius-sm: 6px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.10);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #eef2f7;
+    color: var(--slate);
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* HEADER */
+  .app-header {
+    background: var(--slate);
+    color: white;
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  }
+  .app-header .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -0.3px;
+  }
+  .brand-icon {
+    width: 32px; height: 32px;
+    background: var(--teal);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+  .header-badge {
+    background: rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.7);
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    padding: 2px 8px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+  }
+  .header-right {
+    font-size: 12px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  /* TABS */
+  .tab-bar {
+    background: white;
+    border-bottom: 1px solid var(--slate-300);
+    padding: 0 32px;
+    display: flex;
+    gap: 0;
+    position: sticky;
+    top: 60px;
+    z-index: 99;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .tab-btn {
+    padding: 0 24px;
+    height: 52px;
+    border: none;
+    background: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--slate-500);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.15s;
+    margin-bottom: -1px;
+  }
+  .tab-btn:hover { color: var(--teal); }
+  .tab-btn.active {
+    color: var(--teal-dark);
+    border-bottom-color: var(--teal);
+    font-weight: 600;
+  }
+  .tab-count {
+    background: var(--teal-muted);
+    color: var(--teal-dark);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 20px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* PANELS */
+  .panel { display: none; padding: 32px; max-width: 1200px; margin: 0 auto; }
+  .panel.active { display: block; }
+
+  /* SECTION CARD */
+  .card {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--slate-100);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card-header h3 {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--slate-700);
+  }
+  .card-header-icon {
+    width: 28px; height: 28px;
+    background: var(--teal-muted);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .card-body { padding: 24px; }
+
+  /* FORM GRID */
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 18px;
+  }
+  .form-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+  .form-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .form-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.span-2 { grid-column: span 2; }
+  .form-group.span-3 { grid-column: span 3; }
+  .form-group.span-4 { grid-column: span 4; }
+
+  label {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--slate-500);
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+  }
+  label .required { color: var(--danger); margin-left: 2px; }
+
+  input[type="text"], input[type="date"], input[type="time"],
+  input[type="number"], select, textarea {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1.5px solid var(--slate-300);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    color: var(--slate);
+    background: white;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(13,148,136,0.12);
+  }
+  input.error, select.error { border-color: var(--danger); background: var(--danger-light); }
+  input[readonly] { background: var(--slate-50); color: var(--slate-500); cursor: default; }
+  textarea { resize: vertical; min-height: 80px; }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+  }
+
+  /* DURATION BOX */
+  .duration-display {
+    background: var(--teal-faint);
+    border: 1.5px solid var(--teal-muted);
+    border-radius: var(--radius-sm);
+    padding: 9px 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--teal-dark);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 40px;
+  }
+
+  /* FACILITATOR MULTI-SELECT */
+  .multi-select-wrapper {
+    border: 1.5px solid var(--slate-300);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    transition: border-color 0.15s;
+  }
+  .multi-select-wrapper:focus-within { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(13,148,136,0.12); }
+  select[multiple] {
+    border: none;
+    border-radius: 0;
+    padding: 6px;
+    background-image: none;
+    height: 110px;
+  }
+  select[multiple] option { padding: 5px 8px; border-radius: 4px; }
+  select[multiple] option:checked { background: var(--teal-muted); color: var(--teal-dark); }
+
+  /* DURATION BREAKDOWN */
+  .breakdown-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 4px;
+  }
+  .breakdown-total {
+    margin-top: 10px;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .breakdown-total.ok { background: var(--success-light); color: var(--success); border: 1px solid #6ee7b7; }
+  .breakdown-total.warn { background: var(--warning-light); color: #92400e; border: 1px solid #fcd34d; }
+  .breakdown-total.neutral { background: var(--slate-100); color: var(--slate-500); border: 1px solid var(--slate-300); }
+  .breakdown-total .mono { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 600; }
+
+  /* SAVE BUTTON */
+  .save-bar {
+    background: white;
+    border-top: 1px solid var(--slate-200);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .btn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .btn-primary {
+    background: var(--teal);
+    color: white;
+    box-shadow: 0 2px 8px rgba(13,148,136,0.3);
+  }
+  .btn-primary:hover { background: var(--teal-dark); box-shadow: 0 4px 16px rgba(13,148,136,0.35); transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-ghost {
+    background: var(--slate-100);
+    color: var(--slate-700);
+  }
+  .btn-ghost:hover { background: var(--slate-200); }
+
+  /* SAVE SUCCESS TOAST */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    background: var(--slate);
+    color: white;
+    padding: 14px 20px;
+    border-radius: var(--radius);
+    font-size: 13.5px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: var(--shadow-lg);
+    z-index: 999;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast-icon { font-size: 18px; }
+
+  /* VALIDATION MESSAGES */
+  .field-error {
+    font-size: 11px;
+    color: var(--danger);
+    font-weight: 500;
+    display: none;
+  }
+  .field-error.visible { display: block; }
+
+  /* RAW DATA TABLE */
+  .table-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .search-input {
+    flex: 1;
+    max-width: 320px;
+    padding: 9px 14px 9px 36px;
+    border: 1.5px solid var(--slate-300);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    outline: none;
+    background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 11px center;
+    transition: border-color 0.15s;
+  }
+  .search-input:focus { border-color: var(--teal); outline: none; }
+
+  .filter-select {
+    padding: 9px 12px;
+    border: 1.5px solid var(--slate-300);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--slate);
+    background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E") no-repeat right 8px center;
+    padding-right: 28px;
+    appearance: none;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .filter-select:focus { border-color: var(--teal); }
+
+  .table-wrapper { overflow-x: auto; border-radius: var(--radius-sm); border: 1px solid var(--slate-200); }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; white-space: nowrap; }
+  thead { background: var(--slate-50); }
+  th {
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--slate-500);
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--slate-200);
+    transition: background 0.1s;
+  }
+  th:hover { background: var(--slate-100); }
+  th.sorted-asc::after { content: ' ↑'; }
+  th.sorted-desc::after { content: ' ↓'; }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--slate-100);
+    color: var(--slate-700);
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--teal-faint); }
+  .mono-cell { font-family: 'DM Mono', monospace; font-size: 11.5px; color: var(--teal-dark); }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-individual { background: #ede9fe; color: #5b21b6; }
+  .badge-group { background: #dbeafe; color: #1d4ed8; }
+  .badge-general { background: #fce7f3; color: #9d174d; }
+  .empty-state {
+    text-align: center;
+    padding: 64px 32px;
+    color: var(--slate-400);
+  }
+  .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  /* DASHBOARD */
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .metric-card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    border-top: 3px solid transparent;
+    transition: transform 0.15s;
+  }
+  .metric-card:hover { transform: translateY(-2px); }
+  .metric-card.teal { border-top-color: var(--teal); }
+  .metric-card.violet { border-top-color: #8b5cf6; }
+  .metric-card.blue { border-top-color: #3b82f6; }
+  .metric-card.pink { border-top-color: #ec4899; }
+  .metric-card.amber { border-top-color: var(--warning); }
+  .metric-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--slate-500);
+    margin-bottom: 8px;
+  }
+  .metric-value {
+    font-size: 32px;
+    font-weight: 700;
+    font-family: 'DM Mono', monospace;
+    line-height: 1;
+    color: var(--slate);
+  }
+  .metric-sub {
+    font-size: 11.5px;
+    color: var(--slate-400);
+    margin-top: 4px;
+  }
+
+  .chart-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .chart-card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+  }
+  .chart-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--slate-500);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .chart-title .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--teal);
+  }
+  canvas { max-height: 260px; }
+
+  .dash-empty {
+    text-align: center;
+    padding: 80px 32px;
+    color: var(--slate-400);
+  }
+  .dash-empty .empty-icon { font-size: 56px; margin-bottom: 16px; }
+
+  /* RESPONSIVE ADJUSTMENTS */
+  @media (max-width: 900px) {
+    .panel { padding: 20px 16px; }
+    .form-grid.cols-4, .form-grid.cols-3 { grid-template-columns: repeat(2, 1fr); }
+    .breakdown-row { grid-template-columns: repeat(2, 1fr); }
+    .metric-grid { grid-template-columns: repeat(2, 1fr); }
+    .chart-grid { grid-template-columns: 1fr; }
+    .form-group.span-2, .form-group.span-3, .form-group.span-4 { grid-column: span 1; }
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--slate-300); border-radius: 3px; }
+
+  /* ACTIVITY ID */
+  .activity-id-display {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--slate-400);
+  }
+
+  /* ===================== LOGIN SCREEN ===================== */
+  #loginScreen {
+    position: fixed; inset: 0;
+    background: linear-gradient(135deg, #0f172a 0%, #134e4a 60%, #0f172a 100%);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.4s ease;
+  }
+  #loginScreen.hidden { opacity: 0; pointer-events: none; }
+
+  .login-box {
+    background: white;
+    border-radius: 16px;
+    padding: 48px 44px;
+    width: 100%; max-width: 420px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.4);
+    position: relative;
+    animation: slideUp 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes slideUp {
+    from { transform: translateY(32px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  .login-logo {
+    width: 52px; height: 52px;
+    background: var(--teal);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 16px rgba(13,148,136,0.35);
+  }
+  .login-title { font-size: 22px; font-weight: 700; color: var(--slate); margin-bottom: 4px; }
+  .login-sub   { font-size: 13px; color: var(--slate-500); margin-bottom: 32px; }
+
+  .login-field { margin-bottom: 16px; }
+  .login-field label {
+    font-size: 11.5px; font-weight: 600; color: var(--slate-500);
+    text-transform: uppercase; letter-spacing: 0.4px;
+    display: block; margin-bottom: 6px;
+  }
+  .login-field input {
+    width: 100%; padding: 11px 14px;
+    border: 1.5px solid var(--slate-300);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif; font-size: 14px;
+    color: var(--slate); outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .login-field input:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(13,148,136,0.12);
+  }
+  .login-error {
+    background: var(--danger-light); color: var(--danger);
+    border: 1px solid #fca5a5;
+    border-radius: var(--radius-sm);
+    padding: 10px 14px; font-size: 13px; font-weight: 500;
+    margin-bottom: 16px; display: none;
+  }
+  .login-error.visible { display: block; }
+  .btn-login {
+    width: 100%; padding: 12px;
+    background: var(--teal); color: white;
+    border: none; border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: all 0.15s;
+    box-shadow: 0 2px 8px rgba(13,148,136,0.3);
+    margin-top: 4px;
+  }
+  .btn-login:hover { background: var(--teal-dark); transform: translateY(-1px); }
+  .login-footer { text-align: center; margin-top: 20px; font-size: 12px; color: var(--slate-400); }
+
+  /* ===================== USER MENU (header) ===================== */
+  .user-menu { position: relative; }
+  .user-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--teal); color: white;
+    font-size: 13px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; border: 2px solid rgba(255,255,255,0.2);
+    transition: border-color 0.15s;
+  }
+  .user-avatar:hover { border-color: var(--teal-light); }
+  .user-dropdown {
+    position: absolute; right: 0; top: 44px;
+    background: white; border-radius: var(--radius);
+    box-shadow: var(--shadow-lg); min-width: 220px;
+    border: 1px solid var(--slate-200);
+    overflow: hidden; display: none; z-index: 200;
+  }
+  .user-dropdown.open { display: block; }
+  .user-dropdown-header {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--slate-100);
+  }
+  .user-dropdown-name  { font-size: 13.5px; font-weight: 700; color: var(--slate); }
+  .user-dropdown-email { font-size: 11.5px; color: var(--slate-400); margin-top: 2px; }
+  .user-dropdown-role  {
+    display: inline-block; margin-top: 6px;
+    background: var(--teal-muted); color: var(--teal-dark);
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.5px; padding: 2px 7px; border-radius: 20px;
+  }
+  .user-dropdown-item {
+    padding: 11px 16px; font-size: 13px; color: var(--slate-700);
+    cursor: pointer; display: flex; align-items: center; gap: 8px;
+    transition: background 0.1s;
+  }
+  .user-dropdown-item:hover { background: var(--slate-50); }
+  .user-dropdown-item.danger { color: var(--danger); }
+  .user-dropdown-item.danger:hover { background: var(--danger-light); }
+  .user-dropdown-divider { height: 1px; background: var(--slate-100); }
+
+  /* ===================== ADMIN PANEL ===================== */
+  #adminOverlay {
+    position: fixed; inset: 0;
+    background: rgba(15,23,42,0.6);
+    z-index: 500; display: none; align-items: center; justify-content: center;
+  }
+  #adminOverlay.open { display: flex; }
+  .admin-panel {
+    background: white; border-radius: 16px;
+    width: 100%; max-width: 700px; max-height: 90vh;
+    overflow-y: auto; box-shadow: var(--shadow-lg);
+    animation: slideUp 0.3s ease;
+  }
+  .admin-panel-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--slate-100);
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; background: white; z-index: 10;
+  }
+  .admin-panel-header h2 { font-size: 16px; font-weight: 700; }
+  .admin-close {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--slate-100); border: none; cursor: pointer;
+    font-size: 16px; display: flex; align-items: center; justify-content: center;
+    transition: background 0.1s;
+  }
+  .admin-close:hover { background: var(--slate-200); }
+  .admin-body { padding: 24px; }
+
+  .user-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 24px; }
+  .user-table th {
+    text-align: left; padding: 8px 12px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--slate-500);
+    border-bottom: 1px solid var(--slate-200);
+  }
+  .user-table td { padding: 10px 12px; border-bottom: 1px solid var(--slate-100); color: var(--slate-700); vertical-align: middle; }
+  .user-table tr:last-child td { border-bottom: none; }
+  .role-badge {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    padding: 2px 7px; border-radius: 20px; letter-spacing: 0.4px;
+  }
+  .role-admin    { background: #fef3c7; color: #92400e; }
+  .role-director { background: #ede9fe; color: #5b21b6; }
+  .role-staff    { background: var(--teal-muted); color: var(--teal-dark); }
+
+  /* ===================== PASSWORD MODAL ===================== */
+  #pwdOverlay {
+    position: fixed; inset: 0;
+    background: rgba(15,23,42,0.55);
+    z-index: 600; display: none; align-items: center; justify-content: center;
+  }
+  #pwdOverlay.open { display: flex; }
+  .pwd-modal {
+    background: white; border-radius: 14px;
+    width: 100%; max-width: 440px;
+    box-shadow: var(--shadow-lg);
+    animation: slideUp 0.3s ease;
+    overflow: hidden;
+  }
+  .pwd-modal-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--slate-100);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .pwd-modal-header h3 { font-size: 15px; font-weight: 700; }
+  .pwd-modal-body { padding: 24px; }
+  .pwd-field { margin-bottom: 14px; }
+  .pwd-field label { font-size: 11.5px; font-weight: 600; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.4px; display: block; margin-bottom: 5px; }
+  .pwd-field input { width: 100%; padding: 10px 12px; border: 1.5px solid var(--slate-300); border-radius: var(--radius-sm); font-family: 'DM Sans', sans-serif; font-size: 13.5px; outline: none; transition: border-color 0.15s; }
+  .pwd-field input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(13,148,136,0.12); }
+  .pwd-strength { height: 4px; border-radius: 2px; margin-top: 6px; transition: all 0.3s; background: var(--slate-200); }
+  .pwd-strength.weak   { background: var(--danger); width: 33%; }
+  .pwd-strength.medium { background: var(--warning); width: 66%; }
+  .pwd-strength.strong { background: var(--success); width: 100%; }
+  .pwd-strength-label  { font-size: 11px; color: var(--slate-400); margin-top: 4px; }
+  .pwd-msg { padding: 8px 12px; border-radius: var(--radius-sm); font-size: 12.5px; font-weight: 500; margin-bottom: 14px; display: none; }
+  .pwd-msg.ok  { background: var(--success-light); color: var(--success); border: 1px solid #6ee7b7; display: block; }
+  .pwd-msg.err { background: var(--danger-light); color: var(--danger); border: 1px solid #fca5a5; display: block; }
+  .pwd-footer { display: flex; gap: 10px; justify-content: flex-end; }
+
+  /* BLOCKED BADGE */
+  .blocked-badge { background: #fee2e2; color: var(--danger); font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 2px 7px; border-radius: 20px; letter-spacing: 0.4px; margin-left: 6px; }
+  .user-row-blocked td { opacity: 0.5; }
+  .user-row-blocked td:last-child { opacity: 1; }
+  .btn-danger-sm {
+    padding: 5px 10px; font-size: 11.5px; font-weight: 600;
+    background: var(--danger-light); color: var(--danger);
+    border: 1px solid #fca5a5; border-radius: var(--radius-sm);
+    cursor: pointer; transition: background 0.1s;
+  }
+  .btn-danger-sm:hover { background: #fee2e2; }
+
+  .add-user-form {
+    background: var(--slate-50); border-radius: var(--radius);
+    padding: 20px; border: 1px solid var(--slate-200);
+  }
+  .add-user-form h4 { font-size: 13px; font-weight: 700; margin-bottom: 16px; color: var(--slate); }
+  .add-user-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .add-user-grid .form-group { gap: 4px; }
+  .add-user-grid input, .add-user-grid select {
+    padding: 8px 10px; font-size: 13px;
+  }
+  .admin-msg {
+    padding: 8px 12px; border-radius: var(--radius-sm);
+    font-size: 12.5px; font-weight: 500; margin-top: 10px; display: none;
+  }
+  .admin-msg.ok { background: var(--success-light); color: var(--success); border: 1px solid #6ee7b7; display: block; }
+  .admin-msg.err { background: var(--danger-light); color: var(--danger); border: 1px solid #fca5a5; display: block; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================ LOGIN SCREEN --><div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">📋</div>
+    <div class="login-title">Activity Recording System</div>
+    <div class="login-sub">Sign in with your account to continue</div>
+    <div class="login-error" id="loginError">Incorrect email or password. Please try again.</div>
+    <div class="login-field">
+      <label>Email Address</label>
+      <input type="email" id="loginEmail" placeholder="you@organisation.com" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="login-field">
+      <label>Password</label>
+      <input type="password" id="loginPassword" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn-login" onclick="doLogin()">Sign In →</button>
+    <div class="login-footer">Contact your administrator if you need access</div>
+  </div>
+</div>
+
+<header class="app-header">
+  <div class="brand">
+    <div class="brand-icon">📋</div>
+    Activity Recording System
+    <span class="header-badge">PROTOTYPE</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <div class="header-right" id="headerRecordCount">No records yet</div>
+    <div class="user-menu" id="userMenu">
+      <div class="user-avatar" id="userAvatar" onclick="toggleUserMenu()">?</div>
+      <div class="user-dropdown" id="userDropdown">
+        <div class="user-dropdown-header">
+          <div class="user-dropdown-name" id="ddName">—</div>
+          <div class="user-dropdown-email" id="ddEmail">—</div>
+          <span class="user-dropdown-role" id="ddRole">—</span>
+        </div>
+        <div class="user-dropdown-item" id="adminMenuItem" onclick="openAdmin()" style="display:none;">
+          ⚙️ Manage Users
+        </div>
+        <div class="user-dropdown-item" onclick="openPasswordModal()">
+          🔑 Change Password
+        </div>
+        <div class="user-dropdown-divider"></div>
+        <div class="user-dropdown-item danger" onclick="doLogout()">
+          🚪 Sign Out
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================================ CHANGE PASSWORD MODAL (all users) -->
+<div id="pwdOverlay">
+  <div class="pwd-modal">
+    <div class="pwd-modal-header">
+      <h3>🔑 Change Your Password</h3>
+      <button class="admin-close" onclick="closePasswordModal()">✕</button>
+    </div>
+    <div class="pwd-modal-body">
+      <div class="pwd-msg" id="pwdMsg"></div>
+      <div class="pwd-field">
+        <label>Current Password</label>
+        <input type="password" id="pwdCurrent" placeholder="Enter your current password">
+      </div>
+      <div class="pwd-field">
+        <label>New Password</label>
+        <input type="password" id="pwdNew" placeholder="Min 8 characters" oninput="checkPwdStrength()">
+        <div class="pwd-strength" id="pwdStrengthBar"></div>
+        <div class="pwd-strength-label" id="pwdStrengthLabel"></div>
+      </div>
+      <div class="pwd-field">
+        <label>Confirm New Password</label>
+        <input type="password" id="pwdConfirm" placeholder="Repeat new password">
+      </div>
+      <div class="pwd-footer">
+        <button class="btn btn-ghost" onclick="closePasswordModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="submitPasswordChange()">Update Password</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('entry')" id="tab-entry">
+    ✏️ Data Entry
+  </button>
+  <button class="tab-btn" onclick="switchTab('data')" id="tab-data">
+    🗄️ Raw Data
+    <span class="tab-count" id="tabCount">0</span>
+  </button>
+  <button class="tab-btn" onclick="switchTab('dashboard')" id="tab-dashboard">
+    📊 Dashboard
+  </button>
+  <button class="tab-btn" onclick="switchTab('admin')" id="tab-admin" style="display:none;">
+    ⚙️ User Management
+  </button>
+</nav>
+
+<!-- ============================================================ TAB 1: DATA ENTRY -->
+<div class="panel active" id="panel-entry">
+
+  <!-- BASIC INFORMATION -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">📅</div>
+      <h3>Basic Information</h3>
+    </div>
+    <div class="card-body">
+      <div class="form-grid cols-4">
+        <div class="form-group">
+          <label>Activity Date <span class="required">*</span></label>
+          <input type="date" id="activityDate">
+          <span class="field-error" id="err-date">Please select a date.</span>
+        </div>
+        <div class="form-group">
+          <label>Start Time <span class="required">*</span></label>
+          <input type="time" id="startTime" oninput="calcDuration()">
+          <span class="field-error" id="err-start">Please enter start time.</span>
+        </div>
+        <div class="form-group">
+          <label>End Time <span class="required">*</span></label>
+          <input type="time" id="endTime" oninput="calcDuration()">
+          <span class="field-error" id="err-end">Please enter end time.</span>
+        </div>
+        <div class="form-group">
+          <label>Duration (auto-calculated)</label>
+          <div class="duration-display" id="durationDisplay">
+            <span>—</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Created By <span class="required">*</span></label>
+          <select id="createdBy">
+            <option value="">Select Kaimahi…</option>
+            <option>Erica</option>
+            <option>Kahn</option>
+            <option>Kiana-Rae</option>
+            <option>Naomi</option>
+            <option>Nuku</option>
+            <option>Macy</option>
+            <option>Tj</option>
+            <option>Quentin</option>
+          </select>
+          <span class="field-error" id="err-createdBy">Please select a staff member.</span>
+        </div>
+        <div class="form-group">
+          <label>Activity Type <span class="required">*</span></label>
+          <select id="activityType" onchange="toggleSessionProgram()">
+            <option value="">Select type…</option>
+            <option>Individual Session</option>
+            <option>Group Session</option>
+            <option>General Activity</option>
+          </select>
+          <span class="field-error" id="err-activityType">Please select an activity type.</span>
+        </div>
+        <div class="form-group" id="sessionTypeGroup">
+          <label>Session Type</label>
+          <select id="sessionType">
+            <option value="">Select…</option>
+            <option>Individual</option>
+            <option>Small Group</option>
+            <option>Whole Class</option>
+            <option>Drop-in Session</option>
+            <option>Teacher/Whānau Hui</option>
+            <option>Hui</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group" id="programGroup" style="opacity:0.4;pointer-events:none;">
+          <label>Programme <span class="required">*</span></label>
+          <select id="programme">
+            <option value="">Select programme…</option>
+            <option>Change Up</option>
+            <option>Drop-in Support</option>
+            <option>Friendship</option>
+            <option>Mauri Ake</option>
+            <option>Oho Ake</option>
+            <option>Pepi Ake</option>
+            <option>Piki Ake</option>
+            <option>Sports/Leadership</option>
+            <option>Hui</option>
+            <option>Other</option>
+          </select>
+          <span class="field-error" id="err-programme">Please select a programme.</span>
+        </div>
+        <div class="form-group">
+          <label>Location <span class="required">*</span></label>
+          <select id="location">
+            <option value="">Select location…</option>
+            <option>Ararimu</option>
+            <option>Drury</option>
+            <option>Hingaia Peninsula</option>
+            <option>Karaka</option>
+            <option>Leabank</option>
+            <option>Mangapikopiko</option>
+            <option>Ngakoroa</option>
+            <option>Otahuhu Intermediate</option>
+            <option>Otahuhu Primary</option>
+            <option>Panama Road</option>
+            <option>Papakura Intermediate</option>
+            <option>Paparimu</option>
+            <option>Weymouth</option>
+            <option>Other</option>
+          </select>
+          <span class="field-error" id="err-location">Please select a location.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FACILITATORS -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">👥</div>
+      <h3>Kaimahi / Facilitators</h3>
+    </div>
+    <div class="card-body">
+      <div class="form-grid cols-4">
+        <div class="form-group">
+          <label>Main Facilitator <span class="required">*</span></label>
+          <select id="mainFacilitator">
+            <option value="">Select…</option>
+            <option>Erica</option><option>Kahn</option><option>Kiana-Rae</option>
+            <option>Naomi</option><option>Nuku</option><option>Macy</option>
+            <option>Tj</option><option>Quentin</option>
+          </select>
+          <span class="field-error" id="err-mainFac">Required.</span>
+        </div>
+        <div class="form-group">
+          <label>Facilitator 2</label>
+          <select id="facilitator2">
+            <option value="">None</option>
+            <option>Erica</option><option>Kahn</option><option>Kiana-Rae</option>
+            <option>Naomi</option><option>Nuku</option><option>Macy</option>
+            <option>Tj</option><option>Quentin</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Facilitator 3</label>
+          <select id="facilitator3">
+            <option value="">None</option>
+            <option>Erica</option><option>Kahn</option><option>Kiana-Rae</option>
+            <option>Naomi</option><option>Nuku</option><option>Macy</option>
+            <option>Tj</option><option>Quentin</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Facilitator 4</label>
+          <select id="facilitator4">
+            <option value="">None</option>
+            <option>Erica</option><option>Kahn</option><option>Kiana-Rae</option>
+            <option>Naomi</option><option>Nuku</option><option>Macy</option>
+            <option>Tj</option><option>Quentin</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DELIVERY & CLASSIFICATION -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">🎯</div>
+      <h3>Delivery & Classification</h3>
+    </div>
+    <div class="card-body">
+      <div class="form-grid cols-3">
+        <div class="form-group">
+          <label>Delivery Mode <span class="required">*</span></label>
+          <select id="deliveryMode">
+            <option value="">Select…</option>
+            <option>Face to Face</option>
+            <option>Online</option>
+            <option>Phone</option>
+            <option>Community Visit</option>
+          </select>
+          <span class="field-error" id="err-delivery">Please select a delivery mode.</span>
+        </div>
+        <div class="form-group">
+          <label>Activity Classification <span class="required">*</span></label>
+          <select id="classification">
+            <option value="">Select…</option>
+            <option>Education</option>
+            <option>Support Session</option>
+            <option>Assessment</option>
+            <option>Community Engagement</option>
+            <option>Administration</option>
+            <option>Planning</option>
+          </select>
+          <span class="field-error" id="err-class">Please select a classification.</span>
+        </div>
+        <div class="form-group">
+          <label>Follow Up Required? <span class="required">*</span></label>
+          <select id="followUp">
+            <option value="">Select…</option>
+            <option>Yes</option>
+            <option>No</option>
+          </select>
+          <span class="field-error" id="err-followUp">Please select an option.</span>
+          <span style="font-size:11px;color:var(--slate-400);margin-top:2px;">e.g. meeting, forms, email, team follow-up</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PARTICIPANTS -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">🧑‍🤝‍🧑</div>
+      <h3>Participant Information</h3>
+    </div>
+    <div class="card-body">
+      <div class="form-grid cols-3">
+        <div class="form-group">
+          <label>Number of Participants <span class="required">*</span></label>
+          <input type="number" id="participantCount" min="0" placeholder="0">
+          <span class="field-error" id="err-participants">Please enter a number.</span>
+        </div>
+        <div class="form-group">
+          <label>Group Name <span style="font-weight:400;color:var(--slate-400)">(optional)</span></label>
+          <input type="text" id="groupName" placeholder="e.g. Year 9 Maths…">
+        </div>
+        <div class="form-group">
+          <label>Participant Name / ID <span style="font-weight:400;color:var(--slate-400)">(optional)</span></label>
+          <input type="text" id="participantId" placeholder="Name or ID…">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DURATION BREAKDOWN -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">⏱️</div>
+      <h3>Duration Breakdown (minutes)</h3>
+    </div>
+    <div class="card-body">
+      <div class="breakdown-row" style="grid-template-columns:repeat(3,1fr);">
+        <div class="form-group">
+          <label>Delivery Time</label>
+          <input type="number" id="deliveryTime" min="0" placeholder="0" oninput="checkBreakdown()">
+        </div>
+        <div class="form-group">
+          <label>Travel Time</label>
+          <input type="number" id="travelTime" min="0" placeholder="0" oninput="checkBreakdown()">
+        </div>
+        <div class="form-group">
+          <label>Administration Time</label>
+          <input type="number" id="adminTime" min="0" placeholder="0" oninput="checkBreakdown()">
+        </div>
+      </div>
+      <div class="breakdown-total neutral" id="breakdownStatus" style="margin-top:12px;">
+        <span id="breakdownMsg">Enter breakdown values to validate against session duration</span>
+        <span class="mono" id="breakdownTally">—</span>
+      </div>
+      <div id="minutesLeftBar" style="display:none;margin-top:8px;padding:8px 14px;border-radius:var(--radius-sm);background:var(--teal-faint);border:1px solid var(--teal-muted);font-size:12.5px;color:var(--teal-dark);font-weight:500;">
+        ⏳ <span id="minutesLeftText"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTES -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">📝</div>
+      <h3>Additional Notes</h3>
+    </div>
+    <div class="card-body">
+      <div class="form-group">
+        <label>Notes / Description</label>
+        <textarea id="notes" placeholder="Any additional information about this activity…"></textarea>
+      </div>
+    </div>
+
+    <div class="save-bar">
+      <div class="activity-id-display">Next ID: <span id="nextIdDisplay">ACT-0001</span></div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-ghost" onclick="clearForm()">🔄 Clear Form</button>
+        <button class="btn btn-primary" onclick="saveActivity()">💾 Save Activity</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================ TAB 2: RAW DATA -->
+<div class="panel" id="panel-data">
+  <div class="card">
+    <div class="card-body">
+      <div class="table-controls">
+        <input type="text" class="search-input" id="tableSearch" placeholder="Search all columns…" oninput="renderTable()">
+        <select class="filter-select" id="filterType" onchange="renderTable()">
+          <option value="">All Types</option>
+          <option>Individual Session</option>
+          <option>Group Session</option>
+          <option>General Activity</option>
+        </select>
+        <select class="filter-select" id="filterFac" onchange="renderTable()">
+          <option value="">All Kaimahi</option>
+          <option>Erica</option><option>Kahn</option><option>Kiana-Rae</option>
+          <option>Naomi</option><option>Nuku</option><option>Macy</option>
+          <option>Tj</option><option>Quentin</option>
+        </select>
+        <select class="filter-select" id="filterClass" onchange="renderTable()">
+          <option value="">All Classifications</option>
+          <option>Education</option><option>Support Session</option><option>Assessment</option>
+          <option>Community Engagement</option><option>Administration</option><option>Planning</option>
+        </select>
+        <button class="btn btn-ghost" onclick="exportCSV()">⬇️ Export CSV</button>
+      </div>
+      <div class="table-wrapper" id="tableWrapper">
+        <div class="empty-state">
+          <div class="empty-icon">🗄️</div>
+          <p>No activities recorded yet.<br>Use the Data Entry tab to save your first activity.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ TAB 3: DASHBOARD -->
+<div class="panel" id="panel-dashboard">
+  <!-- FILTER BAR -->
+  <div class="card" id="dashFilterBar" style="display:none;">
+    <div class="card-body" style="padding:16px 24px;">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--slate-500);">Filter:</span>
+        <select class="filter-select" id="dashFilterKaimahi" onchange="applyDashFilters()">
+          <option value="">All Kaimahi</option>
+          <option>Erica</option><option>Kahn</option><option>Kiana-Rae</option>
+          <option>Naomi</option><option>Nuku</option><option>Macy</option>
+          <option>Tj</option><option>Quentin</option>
+        </select>
+        <select class="filter-select" id="dashFilterMonth" onchange="applyDashFilters()">
+          <option value="">All Months</option>
+        </select>
+        <select class="filter-select" id="dashFilterWeek" onchange="applyDashFilters()">
+          <option value="">All Weeks</option>
+        </select>
+        <button class="btn btn-ghost" onclick="clearDashFilters()" style="padding:8px 16px;font-size:12.5px;">✕ Clear Filters</button>
+        <span id="dashFilterBadge" style="display:none;background:var(--teal-muted);color:var(--teal-dark);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;font-family:'DM Mono',monospace;"></span>
+      </div>
+    </div>
+  </div>
+  <div id="dashContent">
+    <div class="dash-empty">
+      <div class="empty-icon">📊</div>
+      <p>Save activities to see your dashboard.</p>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon">✅</span>
+  <span id="toastMsg">Activity saved successfully!</span>
+</div>
+
+<!-- ============================================================ TAB 4: ADMIN USER MANAGEMENT -->
+<div class="panel" id="panel-admin">
+
+  <!-- USER ACCOUNTS TABLE -->
+  <div class="card" style="margin-bottom:20px;">
+    <div class="card-header">
+      <div class="card-header-icon">👤</div>
+      <h3>User Accounts</h3>
+    </div>
+    <div class="card-body" style="padding:0;">
+      <table class="user-table" id="userTableInline" style="margin-bottom:0;">
+        <thead>
+          <tr>
+            <th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Last Login</th><th>Password Changed</th><th style="width:220px;text-align:center;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="userTableBodyInline"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ADD NEW USER -->
+  <div class="card" style="margin-bottom:20px;">
+    <div class="card-header">
+      <div class="card-header-icon">➕</div>
+      <h3>Add New User</h3>
+    </div>
+    <div class="card-body">
+      <div class="add-user-grid" style="grid-template-columns:repeat(4,1fr);">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="newName" placeholder="e.g. Jane Smith">
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="newEmail" placeholder="jane@mahitahi.co.nz">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="newPassword" placeholder="Min 6 characters">
+        </div>
+        <div class="form-group">
+          <label>Role</label>
+          <select id="newRole">
+            <option value="staff">Staff (Kaimahi)</option>
+            <option value="director">Director</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:16px;display:flex;align-items:center;gap:12px;">
+        <button class="btn btn-primary" onclick="addUser()">➕ Add User</button>
+        <div class="admin-msg" id="adminMsg" style="margin-top:0;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASSWORD CHANGE BACKLOG -->
+  <div class="card" style="margin-bottom:20px;">
+    <div class="card-header">
+      <div class="card-header-icon">📋</div>
+      <h3>Password Change Backlog</h3>
+    </div>
+    <div class="card-body" style="padding:0;">
+      <div id="pwdBacklogWrapper">
+        <div class="empty-state" style="padding:32px;">
+          <div class="empty-icon" style="font-size:32px;">📋</div>
+          <p>No password changes recorded yet.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN RESET PASSWORD -->
+  <div class="card" style="margin-bottom:20px;">
+    <div class="card-header">
+      <div class="card-header-icon">🔄</div>
+      <h3>Reset a User's Password</h3>
+    </div>
+    <div class="card-body">
+      <p style="font-size:13px;color:var(--slate-500);margin-bottom:16px;">Override any user's password directly. This will be logged in the backlog.</p>
+      <div class="add-user-grid" style="grid-template-columns:1fr 1fr 1fr;">
+        <div class="form-group">
+          <label>Select User</label>
+          <select id="resetUserSelect">
+            <option value="">Choose user…</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>New Password</label>
+          <input type="password" id="resetNewPassword" placeholder="Min 6 characters">
+        </div>
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <input type="password" id="resetConfirmPassword" placeholder="Repeat password">
+        </div>
+      </div>
+      <div style="margin-top:16px;display:flex;align-items:center;gap:12px;">
+        <button class="btn btn-primary" onclick="adminResetPassword()">🔄 Reset Password</button>
+        <div class="admin-msg" id="resetMsg" style="margin-top:0;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DELETE ACTIVITY RECORDS -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">🗑️</div>
+      <h3>Delete Activity Records</h3>
+    </div>
+    <div class="card-body">
+      <p style="font-size:13px;color:var(--slate-500);margin-bottom:16px;">Search and permanently delete individual activity records. This cannot be undone.</p>
+      <div style="display:flex;gap:12px;margin-bottom:16px;">
+        <input type="text" class="search-input" id="adminRecordSearch" placeholder="Search by Activity ID, Kaimahi, date…" oninput="renderAdminRecordTable()" style="max-width:400px;flex:1;">
+        <span id="adminRecordCount" style="font-size:12px;color:var(--slate-400);align-self:center;"></span>
+      </div>
+      <div class="table-wrapper" id="adminRecordWrapper"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// =====================================================
+// STATE
+// =====================================================
+let activities = [];
+let activityCounter = 1;
+let sortCol = null;
+let sortDir = 1;
+let charts = {};
+
+// =====================================================
+// AUTH — USER STORE
+// Roles: 'admin' = full access + user management tab
+//        'director' = all data read + entry, no user management
+//        'staff' = own records only in raw data/dashboard + entry
+// =====================================================
+let users = [
+  { name: 'Administrator',   email: 'admin@mahitahi.co.nz',          password: 'Admin@Mahitahi',    role: 'admin',    lastLogin: null },
+  { name: 'Jody Babbington', email: 'JodyBabbington@mahitahi.co.nz', password: 'Jody@Mahitahi',     role: 'director', lastLogin: null },
+  { name: 'Erica',           email: 'Erica@mahitahi.co.nz',          password: 'Erica@Mahitahi',    role: 'staff',    lastLogin: null },
+  { name: 'Kahn',            email: 'Kahn@mahitahi.co.nz',           password: 'Kahn@Mahitahi',     role: 'staff',    lastLogin: null },
+  { name: 'Kiana-Rae',       email: 'Kiana-Rae@mahitahi.co.nz',      password: 'Kiana-Rae@Mahitahi',role: 'staff',    lastLogin: null },
+  { name: 'Naomi',           email: 'Naomi@mahitahi.co.nz',          password: 'Naomi@Mahitahi',    role: 'staff',    lastLogin: null },
+  { name: 'Nuku',            email: 'Nuku@mahitahi.co.nz',           password: 'Nuku@Mahitahi',     role: 'staff',    lastLogin: null },
+  { name: 'Macy',            email: 'Macy@mahitahi.co.nz',           password: 'Macy@Mahitahi',     role: 'staff',    lastLogin: null },
+  { name: 'Tj',              email: 'Tj@mahitahi.co.nz',             password: 'Tj@Mahitahi',       role: 'staff',    lastLogin: null },
+  { name: 'Quentin',         email: 'Quentin@mahitahi.co.nz',        password: 'Quentin@Mahitahi',  role: 'staff',    lastLogin: null },
+];
+
+let currentUser = null;
+
+// Returns the activity dataset visible to the current user
+function visibleActivities() {
+  if (!currentUser) return [];
+  if (currentUser.role === 'admin' || currentUser.role === 'director') return activities;
+  // Staff: only their own records (where they appear as any facilitator or created by)
+  return activities.filter(a =>
+    a.MainFacilitator === currentUser.name ||
+    a.Facilitator2    === currentUser.name ||
+    a.Facilitator3    === currentUser.name ||
+    a.Facilitator4    === currentUser.name ||
+    a.ActivityCreatedBy === currentUser.name
+  );
+}
+
+function getRoleLabel(role) {
+  return role === 'admin' ? '🔑 Admin' : role === 'director' ? '🎯 Director' : '👤 Staff';
+}
+function getRoleBadgeClass(role) {
+  return role === 'admin' ? 'role-admin' : role === 'director' ? 'role-director' : 'role-staff';
+}
+
+function doLogin() {
+  const email    = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const password = document.getElementById('loginPassword').value;
+  const errEl    = document.getElementById('loginError');
+
+  const user = users.find(u => u.email.toLowerCase() === email && u.password === password);
+  if (!user) {
+    errEl.classList.add('visible');
+    errEl.textContent = 'Incorrect email or password. Please try again.';
+    document.getElementById('loginPassword').value = '';
+    return;
+  }
+  if (user.blocked) {
+    errEl.classList.add('visible');
+    errEl.textContent = 'Your account has been blocked. Please contact your administrator.';
+    document.getElementById('loginPassword').value = '';
+    return;
+  }
+  errEl.classList.remove('visible');
+  currentUser = user;
+  user.lastLogin = new Date().toLocaleString('en-NZ');
+
+  // Avatar
+  const initials = user.name.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+  document.getElementById('userAvatar').textContent = initials;
+  document.getElementById('ddName').textContent  = user.name;
+  document.getElementById('ddEmail').textContent = user.email;
+  document.getElementById('ddRole').textContent  = getRoleLabel(user.role);
+
+  // Show/hide admin menu item in dropdown (keep for quick access)
+  document.getElementById('adminMenuItem').style.display = user.role === 'admin' ? 'flex' : 'none';
+
+  // Show/hide User Management tab
+  document.getElementById('tab-admin').style.display = user.role === 'admin' ? 'flex' : 'none';
+
+  // Show/hide Data Entry tab (staff + admin + director all get it)
+  // Staff see only their own records in Raw Data & Dashboard — no restriction on tab visibility, just data
+
+  // Pre-fill Created By
+  const cb = document.getElementById('createdBy');
+  for (let opt of cb.options) {
+    if (opt.value === user.name) { cb.value = user.name; break; }
+  }
+
+  // Hide login screen
+  const ls = document.getElementById('loginScreen');
+  ls.classList.add('hidden');
+  setTimeout(() => ls.style.display = 'none', 400);
+
+  updateCounters();
+}
+
+function doLogout() {
+  currentUser = null;
+  document.getElementById('userDropdown').classList.remove('open');
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginPassword').value = '';
+  document.getElementById('loginError').classList.remove('visible');
+  document.getElementById('userAvatar').textContent = '?';
+  document.getElementById('tab-admin').style.display = 'none';
+  switchTab('entry');
+  const ls = document.getElementById('loginScreen');
+  ls.style.display = 'flex';
+  setTimeout(() => ls.classList.remove('hidden'), 10);
+}
+
+function toggleUserMenu() {
+  document.getElementById('userDropdown').classList.toggle('open');
+}
+document.addEventListener('click', e => {
+  const menu = document.getElementById('userMenu');
+  if (menu && !menu.contains(e.target)) {
+    document.getElementById('userDropdown').classList.remove('open');
+  }
+  const pwdOverlay = document.getElementById('pwdOverlay');
+  if (pwdOverlay && e.target === pwdOverlay) closePasswordModal();
+});
+
+// =====================================================
+// ADMIN — USER MANAGEMENT (inline tab)
+// =====================================================
+function openAdmin() {
+  document.getElementById('userDropdown').classList.remove('open');
+  switchTab('admin');
+}
+
+function renderUserTable() {
+  const tbody = document.getElementById('userTableBodyInline');
+  if (!tbody) return;
+
+  // Populate reset user dropdown
+  const resetSel = document.getElementById('resetUserSelect');
+  if (resetSel) {
+    const prevVal = resetSel.value;
+    resetSel.innerHTML = '<option value="">Choose user…</option>' +
+      users.filter(u => u.email !== (currentUser?.email || ''))
+        .map(u => `<option value="${u.email}">${u.name} (${u.email})</option>`).join('');
+    if (prevVal) resetSel.value = prevVal;
+  }
+
+  tbody.innerHTML = users.map((u, i) => {
+    const isYou = currentUser && currentUser.email === u.email;
+    const blockedBadge = u.blocked ? `<span class="blocked-badge">Blocked</span>` : '';
+    const statusBadge = u.blocked
+      ? `<span style="background:#fee2e2;color:var(--danger);font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;">🔒 Blocked</span>`
+      : `<span style="background:var(--success-light);color:var(--success);font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;">✓ Active</span>`;
+    const pwdChanged = u.passwordChangedAt
+      ? `<span style="font-size:12px;color:var(--slate-500);">${u.passwordChangedAt}</span>`
+      : `<span style="font-size:12px;color:var(--slate-400);">Never changed</span>`;
+    const actions = isYou
+      ? `<span style="font-size:11px;color:var(--slate-400);">You</span>`
+      : `<div style="display:flex;gap:6px;justify-content:center;">
+           <button class="btn-danger-sm" style="background:${u.blocked?'var(--success-light)':'var(--warning-light)'};color:${u.blocked?'var(--success)':'#92400e'};border-color:${u.blocked?'#6ee7b7':'#fcd34d'};" onclick="toggleBlock(${i})">${u.blocked ? '🔓 Unblock' : '🔒 Block'}</button>
+           <button class="btn-danger-sm" onclick="removeUser(${i})">🗑 Remove</button>
+         </div>`;
+    return `
+      <tr class="${u.blocked ? 'user-row-blocked' : ''}">
+        <td><strong>${u.name}</strong>${blockedBadge}</td>
+        <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--slate-500);">${u.email}</td>
+        <td><span class="role-badge ${getRoleBadgeClass(u.role)}">${u.role}</span></td>
+        <td>${statusBadge}</td>
+        <td style="font-size:12px;color:var(--slate-400);">${u.lastLogin || 'Never'}</td>
+        <td>${pwdChanged}</td>
+        <td style="text-align:center;">${actions}</td>
+      </tr>`;
+  }).join('');
+
+  renderPwdBacklog();
+  renderAdminRecordTable();
+}
+
+function toggleBlock(index) {
+  if (!currentUser || currentUser.role !== 'admin') return;
+  if (users[index].email === currentUser.email) return;
+  users[index].blocked = !users[index].blocked;
+  const action = users[index].blocked ? 'blocked' : 'unblocked';
+  pwdBacklog.unshift({
+    user: users[index].name,
+    email: users[index].email,
+    action: users[index].blocked ? '🔒 Account Blocked' : '🔓 Account Unblocked',
+    by: currentUser.name,
+    at: new Date().toLocaleString('en-NZ'),
+  });
+  renderUserTable();
+  showToast(`${users[index].blocked ? '🔒' : '🔓'} ${users[index].name} has been ${action}.`);
+}
+
+function removeUser(index) {
+  if (!currentUser || currentUser.role !== 'admin') return;
+  if (users[index].email === currentUser.email) return;
+  const name = users[index].name;
+  users.splice(index, 1);
+  renderUserTable();
+  showToast(`🗑 User "${name}" removed.`);
+}
+
+function addUser() {
+  const name     = document.getElementById('newName').value.trim();
+  const email    = document.getElementById('newEmail').value.trim();
+  const password = document.getElementById('newPassword').value;
+  const role     = document.getElementById('newRole').value;
+  const msg      = document.getElementById('adminMsg');
+
+  if (!name || !email || !password) {
+    msg.textContent = 'Please fill in all fields.';
+    msg.className = 'admin-msg err'; return;
+  }
+  if (password.length < 6) {
+    msg.textContent = 'Password must be at least 6 characters.';
+    msg.className = 'admin-msg err'; return;
+  }
+  if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
+    msg.textContent = 'A user with that email already exists.';
+    msg.className = 'admin-msg err'; return;
+  }
+
+  users.push({ name, email, password, role, lastLogin: null, blocked: false, passwordChangedAt: null });
+  document.getElementById('newName').value = '';
+  document.getElementById('newEmail').value = '';
+  document.getElementById('newPassword').value = '';
+  document.getElementById('newRole').value = 'staff';
+  msg.textContent = `✓ User "${name}" added successfully.`;
+  msg.className = 'admin-msg ok';
+  renderUserTable();
+  setTimeout(() => msg.className = 'admin-msg', 3000);
+}
+
+// =====================================================
+// PASSWORD MANAGEMENT — BACKLOG
+// =====================================================
+let pwdBacklog = []; // { user, email, action, by, at }
+
+function renderPwdBacklog() {
+  const wrapper = document.getElementById('pwdBacklogWrapper');
+  if (!wrapper) return;
+  if (pwdBacklog.length === 0) {
+    wrapper.innerHTML = `<div class="empty-state" style="padding:32px;"><div class="empty-icon" style="font-size:32px;">📋</div><p>No password changes recorded yet.</p></div>`;
+    return;
+  }
+  const rows = pwdBacklog.map(e => `
+    <tr>
+      <td><strong>${e.user}</strong></td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--slate-500);">${e.email}</td>
+      <td>${e.action}</td>
+      <td style="font-size:12px;color:var(--slate-500);">${e.by}</td>
+      <td style="font-size:12px;color:var(--slate-400);">${e.at}</td>
+    </tr>`).join('');
+  wrapper.innerHTML = `
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+      <thead style="background:var(--slate-50);">
+        <tr>
+          <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--slate-500);border-bottom:1px solid var(--slate-200);">User</th>
+          <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--slate-500);border-bottom:1px solid var(--slate-200);">Email</th>
+          <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--slate-500);border-bottom:1px solid var(--slate-200);">Action</th>
+          <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--slate-500);border-bottom:1px solid var(--slate-200);">Changed By</th>
+          <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--slate-500);border-bottom:1px solid var(--slate-200);">Timestamp</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+// =====================================================
+// CHANGE PASSWORD MODAL (all users)
+// =====================================================
+function openPasswordModal() {
+  document.getElementById('userDropdown').classList.remove('open');
+  document.getElementById('pwdCurrent').value = '';
+  document.getElementById('pwdNew').value = '';
+  document.getElementById('pwdConfirm').value = '';
+  document.getElementById('pwdMsg').className = 'pwd-msg';
+  document.getElementById('pwdStrengthBar').className = 'pwd-strength';
+  document.getElementById('pwdStrengthBar').style.width = '';
+  document.getElementById('pwdStrengthLabel').textContent = '';
+  document.getElementById('pwdOverlay').classList.add('open');
+}
+
+function closePasswordModal() {
+  document.getElementById('pwdOverlay').classList.remove('open');
+}
+
+function checkPwdStrength() {
+  const val = document.getElementById('pwdNew').value;
+  const bar = document.getElementById('pwdStrengthBar');
+  const lbl = document.getElementById('pwdStrengthLabel');
+  if (!val) { bar.className = 'pwd-strength'; lbl.textContent = ''; return; }
+  const hasUpper = /[A-Z]/.test(val);
+  const hasNum   = /[0-9]/.test(val);
+  const hasSpec  = /[^A-Za-z0-9]/.test(val);
+  const score = (val.length >= 8 ? 1 : 0) + (hasUpper ? 1 : 0) + (hasNum ? 1 : 0) + (hasSpec ? 1 : 0);
+  if (score <= 1) { bar.className = 'pwd-strength weak'; lbl.textContent = 'Weak — add uppercase, numbers or symbols'; }
+  else if (score <= 2) { bar.className = 'pwd-strength medium'; lbl.textContent = 'Medium — getting better'; }
+  else { bar.className = 'pwd-strength strong'; lbl.textContent = 'Strong password ✓'; }
+}
+
+function submitPasswordChange() {
+  const current = document.getElementById('pwdCurrent').value;
+  const newPwd  = document.getElementById('pwdNew').value;
+  const confirm = document.getElementById('pwdConfirm').value;
+  const msg     = document.getElementById('pwdMsg');
+
+  if (!current || !newPwd || !confirm) {
+    msg.textContent = 'Please fill in all fields.'; msg.className = 'pwd-msg err'; return;
+  }
+  if (current !== currentUser.password) {
+    msg.textContent = 'Current password is incorrect.'; msg.className = 'pwd-msg err'; return;
+  }
+  if (newPwd.length < 8) {
+    msg.textContent = 'New password must be at least 8 characters.'; msg.className = 'pwd-msg err'; return;
+  }
+  if (newPwd !== confirm) {
+    msg.textContent = 'New passwords do not match.'; msg.className = 'pwd-msg err'; return;
+  }
+  if (newPwd === current) {
+    msg.textContent = 'New password must be different from your current password.'; msg.className = 'pwd-msg err'; return;
+  }
+
+  const timestamp = new Date().toLocaleString('en-NZ');
+  currentUser.password = newPwd;
+  currentUser.passwordChangedAt = timestamp;
+
+  pwdBacklog.unshift({
+    user: currentUser.name,
+    email: currentUser.email,
+    action: '🔑 Password Changed (self)',
+    by: currentUser.name,
+    at: timestamp,
+  });
+
+  msg.textContent = '✓ Password updated successfully!'; msg.className = 'pwd-msg ok';
+  setTimeout(() => { closePasswordModal(); showToast('🔑 Password updated successfully!'); }, 1200);
+}
+
+// =====================================================
+// ADMIN — RESET ANOTHER USER'S PASSWORD
+// =====================================================
+function adminResetPassword() {
+  const email   = document.getElementById('resetUserSelect').value;
+  const newPwd  = document.getElementById('resetNewPassword').value;
+  const confirm = document.getElementById('resetConfirmPassword').value;
+  const msg     = document.getElementById('resetMsg');
+
+  if (!email || !newPwd || !confirm) {
+    msg.textContent = 'Please fill in all fields.'; msg.className = 'admin-msg err'; return;
+  }
+  if (newPwd.length < 6) {
+    msg.textContent = 'Password must be at least 6 characters.'; msg.className = 'admin-msg err'; return;
+  }
+  if (newPwd !== confirm) {
+    msg.textContent = 'Passwords do not match.'; msg.className = 'admin-msg err'; return;
+  }
+
+  const target = users.find(u => u.email === email);
+  if (!target) { msg.textContent = 'User not found.'; msg.className = 'admin-msg err'; return; }
+
+  const timestamp = new Date().toLocaleString('en-NZ');
+  target.password = newPwd;
+  target.passwordChangedAt = timestamp;
+
+  pwdBacklog.unshift({
+    user: target.name,
+    email: target.email,
+    action: '🔄 Password Reset (by Admin)',
+    by: currentUser.name,
+    at: timestamp,
+  });
+
+  document.getElementById('resetUserSelect').value = '';
+  document.getElementById('resetNewPassword').value = '';
+  document.getElementById('resetConfirmPassword').value = '';
+  msg.textContent = `✓ Password for ${target.name} has been reset.`;
+  msg.className = 'admin-msg ok';
+  renderUserTable();
+  showToast(`🔄 Password reset for ${target.name}`);
+  setTimeout(() => msg.className = 'admin-msg', 3000);
+}
+
+// =====================================================
+// ADMIN — DELETE RECORDS
+// =====================================================
+function deleteRecord(activityId) {
+  if (!currentUser || currentUser.role !== 'admin') return;
+  const idx = activities.findIndex(a => a.ActivityID === activityId);
+  if (idx === -1) return;
+  activities.splice(idx, 1);
+  updateCounters();
+  renderAdminRecordTable();
+  showToast(`🗑 Record ${activityId} deleted.`);
+}
+
+function renderAdminRecordTable() {
+  const wrapper = document.getElementById('adminRecordWrapper');
+  const countEl = document.getElementById('adminRecordCount');
+  if (!wrapper) return;
+  const search = (document.getElementById('adminRecordSearch')?.value || '').toLowerCase();
+  const data = activities.filter(r =>
+    !search || Object.values(r).some(v => String(v).toLowerCase().includes(search))
+  );
+  countEl.textContent = `${data.length} of ${activities.length} records`;
+  if (activities.length === 0) {
+    wrapper.innerHTML = `<div class="empty-state"><div class="empty-icon">🗄️</div><p>No activity records yet.</p></div>`;
+    return;
+  }
+  if (data.length === 0) {
+    wrapper.innerHTML = `<div class="empty-state" style="padding:32px;"><p>No records match your search.</p></div>`;
+    return;
+  }
+  const rows = data.map(r => `
+    <tr>
+      <td class="mono-cell">${r.ActivityID}</td>
+      <td>${r.ActivityDate}</td>
+      <td>${r.MainFacilitator}</td>
+      <td>${r.ActivityType}</td>
+      <td>${r.Programme || '—'}</td>
+      <td>${r.Location}</td>
+      <td>${r.Duration} min</td>
+      <td><button class="btn-danger-sm" onclick="confirmDelete('${r.ActivityID}')">🗑 Delete</button></td>
+    </tr>
+  `).join('');
+  wrapper.innerHTML = `
+    <table style="width:100%;border-collapse:collapse;font-size:12.5px;white-space:nowrap;">
+      <thead style="background:var(--slate-50);">
+        <tr>
+          <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--slate-500);border-bottom:1px solid var(--slate-200);">ID</th>
+          <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--slate-500);border-bottom:1px solid var(--slate-200);">Date</th>
+          <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--slate-500);border-bottom:1px solid var(--slate-200);">Facilitator</th>
+          <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--slate-500);border-bottom:1px solid var(--slate-200);">Type</th>
+          <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--slate-500);border-bottom:1px solid var(--slate-200);">Programme</th>
+          <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--slate-500);border-bottom:1px solid var(--slate-200);">Location</th>
+          <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--slate-500);border-bottom:1px solid var(--slate-200);">Duration</th>
+          <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--slate-500);border-bottom:1px solid var(--slate-200);"></th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+function confirmDelete(activityId) {
+  if (confirm(`Permanently delete record ${activityId}? This cannot be undone.`)) {
+    deleteRecord(activityId);
+  }
+}
+
+// =====================================================
+// TABS
+// =====================================================
+function switchTab(tab) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + tab).classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (tab === 'data') renderTable();
+  if (tab === 'dashboard') renderDashboard();
+  if (tab === 'admin') renderUserTable();
+}
+
+// =====================================================
+// DURATION CALC
+// =====================================================
+function calcDuration() {
+  const s = document.getElementById('startTime').value;
+  const e = document.getElementById('endTime').value;
+  const disp = document.getElementById('durationDisplay');
+  if (!s || !e) { disp.innerHTML = '<span>—</span>'; checkBreakdown(); return; }
+  const sm = timeToMin(s), em = timeToMin(e);
+  const diff = em - sm;
+  if (diff <= 0) { disp.innerHTML = '<span style="color:var(--danger)">⚠ End must be after start</span>'; checkBreakdown(); return; }
+  const h = Math.floor(diff / 60), m = diff % 60;
+  disp.innerHTML = `<span>⏱ ${h > 0 ? h + 'h ' : ''}${m > 0 ? m + 'm' : ''} <small style="color:var(--slate-400);font-size:11px">(${diff} min)</small></span>`;
+  checkBreakdown();
+}
+
+function timeToMin(t) {
+  const [h, m] = t.split(':').map(Number);
+  return h * 60 + m;
+}
+
+function getDurationMin() {
+  const s = document.getElementById('startTime').value;
+  const e = document.getElementById('endTime').value;
+  if (!s || !e) return null;
+  const diff = timeToMin(e) - timeToMin(s);
+  return diff > 0 ? diff : null;
+}
+
+// =====================================================
+// BREAKDOWN CHECK
+// =====================================================
+function checkBreakdown() {
+  const del = parseInt(document.getElementById('deliveryTime').value) || 0;
+  const trav = parseInt(document.getElementById('travelTime').value) || 0;
+  const adm = parseInt(document.getElementById('adminTime').value) || 0;
+  const total = del + trav + adm;
+  const dur = getDurationMin();
+  const status = document.getElementById('breakdownStatus');
+  const msg = document.getElementById('breakdownMsg');
+  const tally = document.getElementById('breakdownTally');
+  const leftBar = document.getElementById('minutesLeftBar');
+  const leftText = document.getElementById('minutesLeftText');
+
+  if (total === 0 && dur === null) {
+    status.className = 'breakdown-total neutral';
+    msg.textContent = 'Enter breakdown values to validate against session duration';
+    tally.textContent = '—';
+    leftBar.style.display = 'none';
+    return;
+  }
+
+  tally.textContent = total + ' min';
+
+  if (dur === null) {
+    status.className = 'breakdown-total neutral';
+    msg.textContent = 'Set start/end times to validate total';
+    leftBar.style.display = 'none';
+  } else if (total === dur) {
+    status.className = 'breakdown-total ok';
+    msg.textContent = `✓ Breakdown matches session duration (${dur} min)`;
+    leftBar.style.display = 'none';
+  } else {
+    const left = dur - total;
+    status.className = 'breakdown-total warn';
+    msg.textContent = `⚠ Breakdown total (${total} min) does not match session duration (${dur} min)`;
+    leftBar.style.display = 'block';
+    if (left > 0) {
+      leftText.textContent = `${left} minute${left !== 1 ? 's' : ''} still to allocate to reach ${dur} min session duration`;
+    } else {
+      leftText.textContent = `${Math.abs(left)} minute${Math.abs(left) !== 1 ? 's' : ''} over the ${dur} min session duration — reduce your breakdown totals`;
+      leftBar.style.background = 'var(--danger-light)';
+      leftBar.style.borderColor = '#fca5a5';
+      leftBar.style.color = 'var(--danger)';
+    }
+    if (left > 0) {
+      leftBar.style.background = 'var(--teal-faint)';
+      leftBar.style.borderColor = 'var(--teal-muted)';
+      leftBar.style.color = 'var(--teal-dark)';
+    }
+  }
+}
+
+// =====================================================
+// SESSION TYPE / PROGRAMME / DELIVERY / CLASSIFICATION TOGGLE
+// =====================================================
+const SESSION_TYPE_OPTIONS = {
+  'Individual Session': [
+    { value: 'Individual', label: 'Individual', selected: true }
+  ],
+  'Group Session': [
+    { value: 'Small Group', label: 'Small Group' },
+    { value: 'Whole Class', label: 'Whole Class' },
+    { value: 'Drop-in Session', label: 'Drop-in Session' },
+    { value: 'Teacher/Whānau Hui', label: 'Teacher/Whānau Hui' },
+    { value: 'Hui', label: 'Hui' },
+    { value: 'Other', label: 'Other' },
+  ],
+  'General Activity': null // hidden
+};
+
+const DELIVERY_OPTIONS = {
+  'Individual Session': ['Face to Face', 'Video Call'],
+  'Group Session':      ['Face to Face', 'Video Call'],
+  'General Activity':   ['Face to Face', 'Online', 'Phone', 'Community Visit'],
+};
+
+const CLASSIFICATION_OPTIONS = {
+  'Individual Session': ['Education', 'Support Session', 'Community Engagement', 'Planning'],
+  'Group Session':      ['Education', 'Support Session', 'Community Engagement', 'Planning'],
+  'General Activity':   ['Assessment', 'Community Engagement', 'Hui', 'Other'],
+};
+
+function toggleSessionProgram() {
+  const type = document.getElementById('activityType').value;
+
+  // --- Session Type ---
+  const sessionGroup = document.getElementById('sessionTypeGroup');
+  const sessionSel = document.getElementById('sessionType');
+  if (!type || type === 'General Activity') {
+    sessionGroup.style.opacity = '0.4';
+    sessionGroup.style.pointerEvents = 'none';
+    sessionSel.innerHTML = '<option value="">N/A</option>';
+  } else {
+    sessionGroup.style.opacity = '1';
+    sessionGroup.style.pointerEvents = 'auto';
+    const opts = SESSION_TYPE_OPTIONS[type] || [];
+    sessionSel.innerHTML = opts.length === 1 && opts[0].selected
+      ? `<option value="${opts[0].value}" selected>${opts[0].label}</option>`
+      : '<option value="">Select…</option>' + opts.map(o => `<option value="${o.value}">${o.label}</option>`).join('');
+  }
+
+  // --- Programme ---
+  const programGroup = document.getElementById('programGroup');
+  const needsProgram = (type === 'Individual Session' || type === 'Group Session');
+  programGroup.style.opacity = needsProgram ? '1' : '0.4';
+  programGroup.style.pointerEvents = needsProgram ? 'auto' : 'none';
+  if (!needsProgram) document.getElementById('programme').value = '';
+
+  // --- Delivery Mode ---
+  const deliverySel = document.getElementById('deliveryMode');
+  const deliveryOpts = DELIVERY_OPTIONS[type] || ['Face to Face', 'Online', 'Phone', 'Community Visit'];
+  const prevDelivery = deliverySel.value;
+  deliverySel.innerHTML = '<option value="">Select…</option>' +
+    deliveryOpts.map(o => `<option value="${o}"${o === prevDelivery ? ' selected' : ''}>${o}</option>`).join('');
+  if (!deliveryOpts.includes(prevDelivery)) deliverySel.value = '';
+
+  // --- Classification ---
+  const classSel = document.getElementById('classification');
+  const classOpts = CLASSIFICATION_OPTIONS[type] || [];
+  const prevClass = classSel.value;
+  classSel.innerHTML = '<option value="">Select…</option>' +
+    classOpts.map(o => `<option value="${o}"${o === prevClass ? ' selected' : ''}>${o}</option>`).join('');
+  if (!classOpts.includes(prevClass)) classSel.value = '';
+}
+
+// =====================================================
+// VALIDATION
+// =====================================================
+function validate() {
+  let valid = true;
+  const checks = [
+    { id: 'activityDate', err: 'err-date' },
+    { id: 'startTime', err: 'err-start' },
+    { id: 'endTime', err: 'err-end' },
+    { id: 'createdBy', err: 'err-createdBy' },
+    { id: 'activityType', err: 'err-activityType' },
+    { id: 'mainFacilitator', err: 'err-mainFac' },
+    { id: 'deliveryMode', err: 'err-delivery' },
+    { id: 'classification', err: 'err-class' },
+    { id: 'followUp', err: 'err-followUp' },
+    { id: 'location', err: 'err-location' },
+    { id: 'participantCount', err: 'err-participants' },
+  ];
+
+  // Conditionally require programme
+  const actType = document.getElementById('activityType').value;
+  if (actType === 'Individual Session' || actType === 'Group Session') {
+    checks.push({ id: 'programme', err: 'err-programme' });
+  }
+
+  checks.forEach(c => {
+    const el = document.getElementById(c.id);
+    const err = document.getElementById(c.err);
+    if (!el || !el.value || el.value.trim() === '') {
+      if (el) el.classList.add('error');
+      if (err) err.classList.add('visible');
+      valid = false;
+    } else {
+      el.classList.remove('error');
+      if (err) err.classList.remove('visible');
+    }
+  });
+
+  // Duration
+  const dur = getDurationMin();
+  if (!dur) {
+    document.getElementById('endTime').classList.add('error');
+    valid = false;
+  }
+
+  return valid;
+}
+
+// =====================================================
+// SAVE ACTIVITY
+// =====================================================
+function saveActivity() {
+  if (!validate()) {
+    showToast('⚠️ Please fill in all required fields.', true);
+    return;
+  }
+
+  const dur = getDurationMin();
+  const id = 'ACT-' + String(activityCounter).padStart(4, '0');
+  activityCounter++;
+
+  const facs = [
+    document.getElementById('mainFacilitator').value,
+    document.getElementById('facilitator2').value,
+    document.getElementById('facilitator3').value,
+    document.getElementById('facilitator4').value,
+  ].filter(Boolean);
+
+  const record = {
+    ActivityID: id,
+    ActivityDate: document.getElementById('activityDate').value,
+    StartTime: document.getElementById('startTime').value,
+    EndTime: document.getElementById('endTime').value,
+    Duration: dur,
+    ActivityType: document.getElementById('activityType').value,
+    Programme: document.getElementById('programme').value,
+    SessionType: document.getElementById('sessionType').value,
+    ActivityCreatedBy: document.getElementById('createdBy').value,
+    MainFacilitator: document.getElementById('mainFacilitator').value,
+    Facilitator2: document.getElementById('facilitator2').value,
+    Facilitator3: document.getElementById('facilitator3').value,
+    Facilitator4: document.getElementById('facilitator4').value,
+    Facilitators: facs.join(', '),
+    DeliveryMode: document.getElementById('deliveryMode').value,
+    ActivityClassification: document.getElementById('classification').value,
+    FollowUpRequired: document.getElementById('followUp').value,
+    ParticipantCount: parseInt(document.getElementById('participantCount').value) || 0,
+    GroupName: document.getElementById('groupName').value,
+    ParticipantID: document.getElementById('participantId').value,
+    DeliveryTime: parseInt(document.getElementById('deliveryTime').value) || 0,
+    TravelTime: parseInt(document.getElementById('travelTime').value) || 0,
+    AdminTime: parseInt(document.getElementById('adminTime').value) || 0,
+    Location: document.getElementById('location').value,
+    Notes: document.getElementById('notes').value,
+    RecordCreatedTimestamp: new Date().toLocaleString('en-NZ'),
+  };
+
+  activities.unshift(record);
+  updateCounters();
+  clearForm();
+  showToast('✅ Activity ' + id + ' saved successfully!');
+}
+
+// =====================================================
+// CLEAR FORM
+// =====================================================
+function clearForm() {
+  const fields = ['activityDate','startTime','endTime','createdBy','activityType','sessionType','programme',
+    'mainFacilitator','facilitator2','facilitator3','facilitator4','deliveryMode','classification','followUp',
+    'participantCount','groupName','participantId','deliveryTime','travelTime','adminTime',
+    'location','notes'];
+  fields.forEach(f => {
+    const el = document.getElementById(f);
+    if (el) { el.value = ''; el.classList.remove('error'); }
+  });
+  document.querySelectorAll('.field-error').forEach(e => e.classList.remove('visible'));
+  document.getElementById('durationDisplay').innerHTML = '<span>—</span>';
+  document.getElementById('breakdownStatus').className = 'breakdown-total neutral';
+  document.getElementById('breakdownMsg').textContent = 'Enter breakdown values to validate against session duration';
+  document.getElementById('breakdownTally').textContent = '—';
+  document.getElementById('minutesLeftBar').style.display = 'none';
+  toggleSessionProgram();
+}
+
+// =====================================================
+// UPDATE COUNTERS
+// =====================================================
+function updateCounters() {
+  const n = activities.length;
+  const visible = visibleActivities().length;
+  document.getElementById('tabCount').textContent = visible;
+  document.getElementById('nextIdDisplay').textContent = 'ACT-' + String(activityCounter).padStart(4, '0');
+  if (currentUser && currentUser.role === 'staff') {
+    document.getElementById('headerRecordCount').textContent = visible === 0 ? 'No activities yet' : `${visible} your record${visible !== 1 ? 's' : ''}`;
+  } else {
+    document.getElementById('headerRecordCount').textContent = n === 0 ? 'No records yet' : n + ' record' + (n !== 1 ? 's' : '') + ' total';
+  }
+}
+
+// =====================================================
+// TOAST
+// =====================================================
+function showToast(msg, isError = false) {
+  const toast = document.getElementById('toast');
+  toast.querySelector('#toastMsg').textContent = msg;
+  toast.style.background = isError ? 'var(--danger)' : 'var(--slate)';
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// =====================================================
+// RENDER TABLE
+// =====================================================
+function renderTable() {
+  const search = document.getElementById('tableSearch').value.toLowerCase();
+  const filterType = document.getElementById('filterType').value;
+  const filterFac = document.getElementById('filterFac').value;
+  const filterClass = document.getElementById('filterClass').value;
+
+  const source = visibleActivities();
+
+  // Show/hide staff notice
+  let staffNotice = document.getElementById('staffDataNotice');
+  if (!staffNotice) {
+    staffNotice = document.createElement('div');
+    staffNotice.id = 'staffDataNotice';
+    staffNotice.style.cssText = 'background:var(--teal-faint);border:1px solid var(--teal-muted);border-radius:var(--radius-sm);padding:10px 14px;font-size:12.5px;color:var(--teal-dark);font-weight:500;margin-bottom:12px;display:none;';
+    document.getElementById('tableWrapper').before(staffNotice);
+  }
+  if (currentUser && currentUser.role === 'staff') {
+    staffNotice.style.display = 'block';
+    staffNotice.textContent = `👤 Showing your activities only (${source.length} record${source.length !== 1 ? 's' : ''}). Admins and Directors can see all records.`;
+  } else {
+    staffNotice.style.display = 'none';
+  }
+
+  let data = source.filter(r => {
+    const matchSearch = !search || Object.values(r).some(v => String(v).toLowerCase().includes(search));
+    const matchType = !filterType || r.ActivityType === filterType;
+    const matchFac = !filterFac || r.Facilitators.includes(filterFac);
+    const matchClass = !filterClass || r.ActivityClassification === filterClass;
+    return matchSearch && matchType && matchFac && matchClass;
+  });
+
+  if (sortCol) {
+    data.sort((a, b) => {
+      const av = String(a[sortCol] || '');
+      const bv = String(b[sortCol] || '');
+      return av.localeCompare(bv) * sortDir;
+    });
+  }
+
+  const wrapper = document.getElementById('tableWrapper');
+  if (data.length === 0) {
+    wrapper.innerHTML = `<div class="empty-state"><div class="empty-icon">🗄️</div><p>${source.length === 0 ? 'No activities recorded yet.<br>Use the Data Entry tab to save your first activity.' : 'No records match your filter.'}</p></div>`;
+    return;
+  }
+
+  const cols = [
+    { key: 'ActivityID', label: 'Activity ID' },
+    { key: 'ActivityDate', label: 'Date' },
+    { key: 'StartTime', label: 'Start' },
+    { key: 'EndTime', label: 'End' },
+    { key: 'Duration', label: 'Dur (min)' },
+    { key: 'ActivityType', label: 'Type' },
+    { key: 'Programme', label: 'Programme' },
+    { key: 'SessionType', label: 'Session' },
+    { key: 'ActivityCreatedBy', label: 'Created By' },
+    { key: 'MainFacilitator', label: 'Main Facilitator' },
+    { key: 'Facilitators', label: 'All Facilitators' },
+    { key: 'DeliveryMode', label: 'Delivery' },
+    { key: 'ActivityClassification', label: 'Classification' },
+    { key: 'FollowUpRequired', label: 'Follow Up?' },
+    { key: 'ParticipantCount', label: '# Participants' },
+    { key: 'GroupName', label: 'Group' },
+    { key: 'DeliveryTime', label: 'Del (min)' },
+    { key: 'TravelTime', label: 'Travel (min)' },
+    { key: 'AdminTime', label: 'Admin (min)' },
+    { key: 'Location', label: 'Location' },
+    { key: 'Notes', label: 'Notes' },
+    { key: 'RecordCreatedTimestamp', label: 'Saved At' },
+  ];
+
+  const thead = cols.map(c => {
+    const cls = sortCol === c.key ? (sortDir === 1 ? 'sorted-asc' : 'sorted-desc') : '';
+    return `<th class="${cls}" onclick="sortTable('${c.key}')">${c.label}</th>`;
+  }).join('');
+
+  const tbody = data.map(r => {
+    const badgeClass = r.ActivityType === 'Individual Session' ? 'badge-individual'
+      : r.ActivityType === 'Group Session' ? 'badge-group' : 'badge-general';
+    const cells = cols.map(c => {
+      let val = r[c.key] !== undefined ? r[c.key] : '';
+      if (c.key === 'ActivityID') return `<td class="mono-cell">${val}</td>`;
+      if (c.key === 'ActivityType') return `<td><span class="badge ${badgeClass}">${val}</span></td>`;
+      return `<td title="${String(val)}">${val}</td>`;
+    }).join('');
+    return `<tr>${cells}</tr>`;
+  }).join('');
+
+  wrapper.innerHTML = `<table><thead><tr>${thead}</tr></thead><tbody>${tbody}</tbody></table>`;
+}
+
+function sortTable(col) {
+  if (sortCol === col) sortDir = -sortDir;
+  else { sortCol = col; sortDir = 1; }
+  renderTable();
+}
+
+// =====================================================
+// EXPORT CSV
+// =====================================================
+function exportCSV() {
+  if (activities.length === 0) { showToast('⚠️ No data to export.', true); return; }
+  const keys = Object.keys(activities[0]);
+  const rows = [keys.join(','), ...activities.map(r => keys.map(k => `"${String(r[k]).replace(/"/g, '""')}"`).join(','))];
+  const blob = new Blob([rows.join('\n')], { type: 'text/csv' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'activity_data.csv'; a.click();
+}
+
+// =====================================================
+// DASHBOARD FILTERS
+// =====================================================
+function getWeekKey(dateStr) {
+  const d = new Date(dateStr);
+  // Get Monday of the week
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  const mon = new Date(d.setDate(diff));
+  const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+  const fmt = dt => dt.toLocaleDateString('en-NZ', { day:'2-digit', month:'short' });
+  return `${fmt(mon)} – ${fmt(sun)}`;
+}
+
+function getWeekSortKey(dateStr) {
+  const d = new Date(dateStr);
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  const mon = new Date(d); mon.setDate(diff);
+  return mon.toISOString().slice(0,10);
+}
+
+function populateDashFilterOptions() {
+  const monthSet = new Set();
+  const weekSet = new Map();
+  visibleActivities().forEach(a => {
+    if (!a.ActivityDate) return;
+    const d = new Date(a.ActivityDate);
+    monthSet.add(d.toLocaleString('default', { month: 'long', year: 'numeric' }));
+    weekSet.set(getWeekKey(a.ActivityDate), getWeekSortKey(a.ActivityDate));
+  });
+
+  const monthSel = document.getElementById('dashFilterMonth');
+  const cur = monthSel.value;
+  monthSel.innerHTML = '<option value="">All Months</option>';
+  [...monthSet].sort((a,b) => new Date('1 '+a)-new Date('1 '+b)).forEach(m => {
+    const o = document.createElement('option'); o.value = m; o.textContent = m;
+    if (m === cur) o.selected = true;
+    monthSel.appendChild(o);
+  });
+
+  const weekSel = document.getElementById('dashFilterWeek');
+  const curW = weekSel.value;
+  weekSel.innerHTML = '<option value="">All Weeks</option>';
+  [...weekSet.entries()].sort((a,b) => a[1].localeCompare(b[1])).forEach(([label]) => {
+    const o = document.createElement('option'); o.value = label; o.textContent = label;
+    if (label === curW) o.selected = true;
+    weekSel.appendChild(o);
+  });
+}
+
+function getFilteredActivities() {
+  const kaimahi = document.getElementById('dashFilterKaimahi').value;
+  const month = document.getElementById('dashFilterMonth').value;
+  const week = document.getElementById('dashFilterWeek').value;
+  return visibleActivities().filter(a => {
+    if (kaimahi && ![a.MainFacilitator, a.Facilitator2, a.Facilitator3, a.Facilitator4].includes(kaimahi)) return false;
+    if (month && a.ActivityDate) {
+      const d = new Date(a.ActivityDate);
+      const m = d.toLocaleString('default', { month: 'long', year: 'numeric' });
+      if (m !== month) return false;
+    }
+    if (week && a.ActivityDate) {
+      if (getWeekKey(a.ActivityDate) !== week) return false;
+    }
+    return true;
+  });
+}
+
+function applyDashFilters() {
+  const kaimahi = document.getElementById('dashFilterKaimahi').value;
+  const month = document.getElementById('dashFilterMonth').value;
+  const week = document.getElementById('dashFilterWeek').value;
+  const activeCount = [kaimahi, month, week].filter(Boolean).length;
+  const badge = document.getElementById('dashFilterBadge');
+  if (activeCount > 0) {
+    badge.style.display = 'inline-block';
+    badge.textContent = activeCount + ' filter' + (activeCount > 1 ? 's' : '') + ' active';
+  } else {
+    badge.style.display = 'none';
+  }
+  renderDashboard();
+}
+
+function clearDashFilters() {
+  document.getElementById('dashFilterKaimahi').value = '';
+  document.getElementById('dashFilterMonth').value = '';
+  document.getElementById('dashFilterWeek').value = '';
+  document.getElementById('dashFilterBadge').style.display = 'none';
+  renderDashboard();
+}
+
+// =====================================================
+// DASHBOARD
+// =====================================================
+function renderDashboard() {
+  const container = document.getElementById('dashContent');
+  const filterBar = document.getElementById('dashFilterBar');
+
+  if (activities.length === 0) {
+    filterBar.style.display = 'none';
+    container.innerHTML = `<div class="dash-empty"><div class="empty-icon">📊</div><p>Save activities to see your dashboard.</p></div>`;
+    return;
+  }
+
+  filterBar.style.display = 'block';
+  populateDashFilterOptions();
+
+  const data = getFilteredActivities();
+  const total = data.length;
+  const individual = data.filter(a => a.ActivityType === 'Individual Session').length;
+  const group = data.filter(a => a.ActivityType === 'Group Session').length;
+  const general = data.filter(a => a.ActivityType === 'General Activity').length;
+  const totalMins = data.reduce((s, a) => s + (a.Duration || 0), 0);
+  const totalHrs = (totalMins / 60).toFixed(1);
+
+  const activeFilters = [
+    document.getElementById('dashFilterKaimahi').value,
+    document.getElementById('dashFilterMonth').value,
+    document.getElementById('dashFilterWeek').value,
+  ].filter(Boolean);
+  const filterNote = activeFilters.length > 0
+    ? `<div style="font-size:12px;color:var(--slate-400);margin-bottom:16px;">Showing <strong style="color:var(--teal-dark)">${total}</strong> of ${activities.length} activities · ${activeFilters.join(' · ')}</div>`
+    : '';
+
+  container.innerHTML = `
+    ${filterNote}
+    <div class="metric-grid">
+      <div class="metric-card teal">
+        <div class="metric-label">Total Activities</div>
+        <div class="metric-value">${total}</div>
+        <div class="metric-sub">Filtered records</div>
+      </div>
+      <div class="metric-card amber">
+        <div class="metric-label">Total Hours</div>
+        <div class="metric-value">${totalHrs}</div>
+        <div class="metric-sub">Hours delivered</div>
+      </div>
+      <div class="metric-card violet">
+        <div class="metric-label">Individual Sessions</div>
+        <div class="metric-value">${individual}</div>
+        <div class="metric-sub">${total > 0 ? Math.round(individual/total*100) : 0}% of total</div>
+      </div>
+      <div class="metric-card blue">
+        <div class="metric-label">Group Sessions</div>
+        <div class="metric-value">${group}</div>
+        <div class="metric-sub">${total > 0 ? Math.round(group/total*100) : 0}% of total</div>
+      </div>
+      <div class="metric-card pink">
+        <div class="metric-label">General Activities</div>
+        <div class="metric-value">${general}</div>
+        <div class="metric-sub">${total > 0 ? Math.round(general/total*100) : 0}% of total</div>
+      </div>
+    </div>
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-title"><div class="dot" style="background:#8b5cf6"></div>Activities by Type</div>
+        <canvas id="chartType"></canvas>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title"><div class="dot" style="background:#3b82f6"></div>Activities by Kaimahi</div>
+        <canvas id="chartFac"></canvas>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title"><div class="dot" style="background:var(--teal)"></div>Activities by Month</div>
+        <canvas id="chartMonth"></canvas>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title"><div class="dot" style="background:#ec4899"></div>Activities by Classification</div>
+        <canvas id="chartClass"></canvas>
+      </div>
+      <div class="chart-card" style="grid-column:span 2;">
+        <div class="chart-title"><div class="dot" style="background:#f59e0b"></div>Activities by Week</div>
+        <canvas id="chartWeek"></canvas>
+      </div>
+    </div>
+  `;
+
+  Object.values(charts).forEach(c => { try { c.destroy(); } catch(e) {} });
+  charts = {};
+
+  const palette = ['#0d9488','#3b82f6','#8b5cf6','#ec4899','#f59e0b','#10b981','#ef4444','#6366f1'];
+  const chartDefaults = {
+    responsive: true,
+    plugins: { legend: { labels: { font: { family: 'DM Sans', size: 12 }, color: '#334155' } } }
+  };
+
+  // Type doughnut
+  charts.type = new Chart(document.getElementById('chartType'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Individual Session', 'Group Session', 'General Activity'],
+      datasets: [{ data: [individual, group, general], backgroundColor: ['#8b5cf6','#3b82f6','#ec4899'], borderWidth: 2, borderColor: '#fff' }]
+    },
+    options: { ...chartDefaults, cutout: '60%' }
+  });
+
+  // Kaimahi bar
+  const facMap = {};
+  data.forEach(a => {
+    [a.MainFacilitator, a.Facilitator2, a.Facilitator3, a.Facilitator4].filter(Boolean).forEach(f => {
+      facMap[f] = (facMap[f] || 0) + 1;
+    });
+  });
+  charts.fac = new Chart(document.getElementById('chartFac'), {
+    type: 'bar',
+    data: {
+      labels: Object.keys(facMap),
+      datasets: [{ label: 'Activities', data: Object.values(facMap), backgroundColor: palette, borderRadius: 6 }]
+    },
+    options: {
+      ...chartDefaults, indexAxis: 'y',
+      plugins: { ...chartDefaults.plugins, legend: { display: false } },
+      scales: { x: { grid: { color: '#f1f5f9' } }, y: { grid: { display: false } } }
+    }
+  });
+
+  // Month line
+  const monthMap = {};
+  data.forEach(a => {
+    if (!a.ActivityDate) return;
+    const d = new Date(a.ActivityDate);
+    const key = d.toLocaleString('default', { month: 'short', year: 'numeric' });
+    monthMap[key] = (monthMap[key] || 0) + 1;
+  });
+  const sortedMonths = Object.keys(monthMap).sort((a,b) => new Date('1 '+a)-new Date('1 '+b));
+  charts.month = new Chart(document.getElementById('chartMonth'), {
+    type: 'line',
+    data: {
+      labels: sortedMonths,
+      datasets: [{ label: 'Activities', data: sortedMonths.map(m => monthMap[m]),
+        borderColor: '#0d9488', backgroundColor: 'rgba(13,148,136,0.1)',
+        fill: true, tension: 0.4, pointBackgroundColor: '#0d9488', pointRadius: 5 }]
+    },
+    options: {
+      ...chartDefaults,
+      plugins: { ...chartDefaults.plugins, legend: { display: false } },
+      scales: { x: { grid: { display: false } }, y: { grid: { color: '#f1f5f9' }, beginAtZero: true, ticks: { stepSize: 1 } } }
+    }
+  });
+
+  // Classification bar
+  const classMap = {};
+  data.forEach(a => { if (a.ActivityClassification) classMap[a.ActivityClassification] = (classMap[a.ActivityClassification] || 0) + 1; });
+  charts.class = new Chart(document.getElementById('chartClass'), {
+    type: 'bar',
+    data: {
+      labels: Object.keys(classMap),
+      datasets: [{ label: 'Activities', data: Object.values(classMap), backgroundColor: palette, borderRadius: 6 }]
+    },
+    options: {
+      ...chartDefaults,
+      plugins: { ...chartDefaults.plugins, legend: { display: false } },
+      scales: { x: { grid: { display: false } }, y: { grid: { color: '#f1f5f9' }, beginAtZero: true, ticks: { stepSize: 1 } } }
+    }
+  });
+
+  // Weekly bar (full width)
+  const weekMap = new Map(); // sortKey -> { label, count }
+  data.forEach(a => {
+    if (!a.ActivityDate) return;
+    const label = getWeekKey(a.ActivityDate);
+    const sort = getWeekSortKey(a.ActivityDate);
+    if (!weekMap.has(sort)) weekMap.set(sort, { label, count: 0 });
+    weekMap.get(sort).count++;
+  });
+  const sortedWeeks = [...weekMap.entries()].sort((a,b) => a[0].localeCompare(b[0]));
+  charts.week = new Chart(document.getElementById('chartWeek'), {
+    type: 'bar',
+    data: {
+      labels: sortedWeeks.map(([,v]) => v.label),
+      datasets: [{
+        label: 'Activities',
+        data: sortedWeeks.map(([,v]) => v.count),
+        backgroundColor: 'rgba(245,158,11,0.8)',
+        borderColor: '#f59e0b',
+        borderWidth: 1.5,
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      ...chartDefaults,
+      plugins: { ...chartDefaults.plugins, legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+        y: { grid: { color: '#f1f5f9' }, beginAtZero: true, ticks: { stepSize: 1 } }
+      }
+    }
+  });
+}
+
+// =====================================================
+// INIT
+// =====================================================
+document.getElementById('activityDate').valueAsDate = new Date();
+
+// Seed data — 20 realistic activities for demo
+(function seedData() {
+  const seed = [
+    { ActivityDate:'2025-04-01', StartTime:'09:00', EndTime:'09:45', Duration:45, ActivityType:'Individual Session', Programme:'Piki Ake', SessionType:'Individual', ActivityCreatedBy:'Erica', MainFacilitator:'Erica', Facilitator2:'', Facilitator3:'', Facilitator4:'', Facilitators:'Erica', DeliveryMode:'Face to Face', ActivityClassification:'Support Session', FollowUpRequired:'Yes', ParticipantCount:1, GroupName:'', ParticipantID:'STU-001', DeliveryTime:40, TravelTime:0, AdminTime:5, Location:'Leabank', Notes:'First session, settled well.', RecordCreatedTimestamp:'01/04/2025, 10:00:00 am' },
+    { ActivityDate:'2025-04-02', StartTime:'10:00', EndTime:'11:00', Duration:60, ActivityType:'Group Session', Programme:'Change Up', SessionType:'Small Group', ActivityCreatedBy:'Kahn', MainFacilitator:'Kahn', Facilitator2:'Naomi', Facilitator3:'', Facilitator4:'', Facilitators:'Kahn, Naomi', DeliveryMode:'Face to Face', ActivityClassification:'Education', FollowUpRequired:'No', ParticipantCount:8, GroupName:'Yr 9 Change Up', ParticipantID:'', DeliveryTime:50, TravelTime:5, AdminTime:5, Location:'Otahuhu Intermediate', Notes:'Good group energy today.', RecordCreatedTimestamp:'02/04/2025, 11:10:00 am' },
+    { ActivityDate:'2025-04-03', StartTime:'13:00', EndTime:'14:00', Duration:60, ActivityType:'General Activity', Programme:'', SessionType:'', ActivityCreatedBy:'Macy', MainFacilitator:'Macy', Facilitator2:'', Facilitator3:'', Facilitator4:'', Facilitators:'Macy', DeliveryMode:'Community Visit', ActivityClassification:'Community Engagement', FollowUpRequired:'No', ParticipantCount:0, GroupName:'', ParticipantID:'', DeliveryTime:45, TravelTime:10, AdminTime:5, Location:'Drury', Notes:'Community outreach visit.', RecordCreatedTimestamp:'03/04/2025, 2:15:00 pm' },
+    { ActivityDate:'2025-04-04', StartTime:'09:30', EndTime:'10:15', Duration:45, ActivityType:'Individual Session', Programme:'Mauri Ake', SessionType:'Individual', ActivityCreatedBy:'Kiana-Rae', MainFacilitator:'Kiana-Rae', Facilitator2:'', Facilitator3:'', Facilitator4:'', Facilitators:'Kiana-Rae', DeliveryMode:'Video Call', ActivityClassification:'Support Session', FollowUpRequired:'Yes', ParticipantCount:1, GroupName:'', ParticipantID:'STU-042', DeliveryTime:40, TravelTime:0, AdminTime:5, Location:'Papakura Intermediate', Notes:'Discussed progress and goals.', RecordCreatedTimestamp:'04/04/2025, 10:20:00 am' },
+    { ActivityDate:'2025-04-07', StartTime:'11:00', EndTime:'12:00', Duration:60, ActivityType:'Group Session', Programme:'Friendship', SessionType:'Whole Class', ActivityCreatedBy:'Naomi', MainFacilitator:'Naomi', Facilitator2:'Tj', Facilitator3:'', Facilitator4:'', Facilitators:'Naomi, Tj', DeliveryMode:'Face to Face', ActivityClassification:'Education', FollowUpRequired:'No', ParticipantCount:24, GroupName:'Room 6', ParticipantID:'', DeliveryTime:55, TravelTime:0, AdminTime:5, Location:'Otahuhu Primary', Notes:'Whole class session, great participation.', RecordCreatedTimestamp:'07/04/2025, 12:10:00 pm' },
+    { ActivityDate:'2025-04-07', StartTime:'14:00', EndTime:'15:00', Duration:60, ActivityType:'General Activity', Programme:'', SessionType:'', ActivityCreatedBy:'Quentin', MainFacilitator:'Quentin', Facilitator2:'', Facilitator3:'', Facilitator4:'', Facilitators:'Quentin', DeliveryMode:'Phone', ActivityClassification:'Hui', FollowUpRequired:'Yes', ParticipantCount:0, GroupName:'', ParticipantID:'', DeliveryTime:50, TravelTime:0, AdminTime:10, Location:'Other', Notes:'Team hui via phone.', RecordCreatedTimestamp:'07/04/2025, 3:10:00 pm' },
+    { ActivityDate:'2025-04-08', StartTime:'09:00', EndTime:'10:00', Duration:60, ActivityType:'Individual Session', Programme:'Oho Ake', SessionType:'Individual', ActivityCreatedBy:'Nuku', MainFacilitator:'Nuku', Facilitator2:'', Facilitator3:'', Facilitator4:'', Facilitators:'Nuku', DeliveryMode:'Face to Face', ActivityClassification:'Support Session', FollowUpRequired:'No', ParticipantCount:1, GroupName:'', ParticipantID:'STU-017', DeliveryTime:50, TravelTime:5, AdminTime:5, Location:'Karaka', Notes:'Reviewed wellbeing plan.', RecordCreatedTimestamp:'08/04/2025, 10:05:00 am' },
+    { ActivityDate:'2025-04-09', StartTime:'10:30', EndTime:'11:30', Duration:60, ActivityType:'Group Session', Programme:'Sports/Leadership', SessionType:'Small Group', ActivityCreatedBy:'Tj', MainFacilitator:'Tj', Facilitator2:'Erica', Facilitator3:'', Facilitator4:'', Facilitators:'Tj, Erica', DeliveryMode:'Face to Face', ActivityClassification:'Education', FollowUpRequired:'No', ParticipantCount:12, GroupName:'Leadership Crew', ParticipantID:'', DeliveryTime:55, TravelTime:0, AdminTime:5, Location:'Panama Road', Notes:'Leadership games and reflection.', RecordCreatedTimestamp:'09/04/2025, 11:35:00 am' },
+    { ActivityDate:'2025-04-10', StartTime:'13:30', EndTime:'14:15', Duration:45, ActivityType:'Individual Session', Programme:'Drop-in Support', SessionType:'Individual', ActivityCreatedBy:'Erica', MainFacilitator:'Erica', Facilitator2:'', Facilitator3:'', Facilitator4:'', Facilitators:'Erica', DeliveryMode:'Video Call', ActivityClassification:'Support Session', FollowUpRequired:'Yes', ParticipantCount:1, GroupName:'', ParticipantID:'STU-088', DeliveryTime:40, TravelTime:0, AdminTime:5, Location:'Weymouth', Notes:'Student initiated contact, high needs.', RecordCreatedTimestamp:'10/04/2025, 2:20:00 pm' },
+    { ActivityDate:'2025-04-11', StartTime:'09:00', EndTime:'10:30', Duration:90, ActivityType:'General Activity', Programme:'', SessionType:'', ActivityCreatedBy:'Kahn', MainFacilitator:'Kahn', Facilitator2:'Macy', Facilitator3:'', Facilitator4:'', Facilitators:'Kahn, Macy', DeliveryMode:'Face to Face', ActivityClassification:'Community Engagement', FollowUpRequired:'No', ParticipantCount:0, GroupName:'', ParticipantID:'', DeliveryTime:80, TravelTime:5, AdminTime:5, Location:'Mangapikopiko', Notes:'Community event setup and attendance.', RecordCreatedTimestamp:'11/04/2025, 10:35:00 am' },
+    { ActivityDate:'2025-04-14', StartTime:'10:00', EndTime:'11:00', Duration:60, ActivityType:'Group Session', Programme:'Hui', SessionType:'Hui', ActivityCreatedBy:'Naomi', MainFacilitator:'Naomi', Facilitator2:'Quentin', Facilitator3:'Nuku', Facilitator4:'', Facilitators:'Naomi, Quentin, Nuku', DeliveryMode:'Face to Face', ActivityClassification:'Community Engagement', FollowUpRequired:'Yes', ParticipantCount:15, GroupName:'Whānau Hui', ParticipantID:'', DeliveryTime:55, TravelTime:0, AdminTime:5, Location:'Ngakoroa', Notes:'Whānau hui, action items noted.', RecordCreatedTimestamp:'14/04/2025, 11:05:00 am' },
+    { ActivityDate:'2025-04-14', StartTime:'14:00', EndTime:'14:45', Duration:45, ActivityType:'Individual Session', Programme:'Pepi Ake', SessionType:'Individual', ActivityCreatedBy:'Kiana-Rae', MainFacilitator:'Kiana-Rae', Facilitator2:'', Facilitator3:'', Facilitator4:'', Facilitators:'Kiana-Rae', DeliveryMode:'Face to Face', ActivityClassification:'Support Session', FollowUpRequired:'No', ParticipantCount:1, GroupName:'', ParticipantID:'STU-023', DeliveryTime:40, TravelTime:0, AdminTime:5, Location:'Ararimu', Notes:'Check-in session.', RecordCreatedTimestamp:'14/04/2025, 2:50:00 pm' },
+    { ActivityDate:'2025-04-15', StartTime:'09:30', EndTime:'10:30', Duration:60, ActivityType:'Group Session', Programme:'Change Up', SessionType:'Drop-in Session', ActivityCreatedBy:'Macy', MainFacilitator:'Macy', Facilitator2:'', Facilitator3:'', Facilitator4:'', Facilitators:'Macy', DeliveryMode:'Video Call', ActivityClassification:'Education', FollowUpRequired:'No', ParticipantCount:6, GroupName:'Drop-in Yr 10', ParticipantID:'', DeliveryTime:55, TravelTime:0, AdminTime:5, Location:'Hingaia Peninsula', Notes:'Online drop-in, 6 attended.', RecordCreatedTimestamp:'15/04/2025, 10:35:00 am' },
+    { ActivityDate:'2025-04-15', StartTime:'13:00', EndTime:'14:00', Duration:60, ActivityType:'General Activity', Programme:'', SessionType:'', ActivityCreatedBy:'Nuku', MainFacilitator:'Nuku', Facilitator2:'', Facilitator3:'', Facilitator4:'', Facilitators:'Nuku', DeliveryMode:'Community Visit', ActivityClassification:'Other', FollowUpRequired:'No', ParticipantCount:0, GroupName:'', ParticipantID:'', DeliveryTime:45, TravelTime:10, AdminTime:5, Location:'Paparimu', Notes:'Site visit and relationship building.', RecordCreatedTimestamp:'15/04/2025, 2:05:00 pm' },
+    { ActivityDate:'2025-04-16', StartTime:'10:00', EndTime:'11:00', Duration:60, ActivityType:'Individual Session', Programme:'Mauri Ake', SessionType:'Individual', ActivityCreatedBy:'Quentin', MainFacilitator:'Quentin', Facilitator2:'', Facilitator3:'', Facilitator4:'', Facilitators:'Quentin', DeliveryMode:'Face to Face', ActivityClassification:'Planning', FollowUpRequired:'Yes', ParticipantCount:1, GroupName:'', ParticipantID:'STU-055', DeliveryTime:50, TravelTime:5, AdminTime:5, Location:'Leabank', Notes:'Planning session for transition.', RecordCreatedTimestamp:'16/04/2025, 11:05:00 am' },
+    { ActivityDate:'2025-04-17', StartTime:'09:00', EndTime:'10:00', Duration:60, ActivityType:'Group Session', Programme:'Piki Ake', SessionType:'Teacher/Whānau Hui', ActivityCreatedBy:'Erica', MainFacilitator:'Erica', Facilitator2:'Kahn', Facilitator3:'', Facilitator4:'', Facilitators:'Erica, Kahn', DeliveryMode:'Face to Face', ActivityClassification:'Community Engagement', FollowUpRequired:'Yes', ParticipantCount:10, GroupName:'Piki Ake Group B', ParticipantID:'', DeliveryTime:50, TravelTime:5, AdminTime:5, Location:'Otahuhu Intermediate', Notes:'Teacher hui, discussed student progress.', RecordCreatedTimestamp:'17/04/2025, 10:10:00 am' },
+    { ActivityDate:'2025-04-22', StartTime:'11:00', EndTime:'12:00', Duration:60, ActivityType:'Individual Session', Programme:'Friendship', SessionType:'Individual', ActivityCreatedBy:'Tj', MainFacilitator:'Tj', Facilitator2:'', Facilitator3:'', Facilitator4:'', Facilitators:'Tj', DeliveryMode:'Video Call', ActivityClassification:'Support Session', FollowUpRequired:'No', ParticipantCount:1, GroupName:'', ParticipantID:'STU-031', DeliveryTime:55, TravelTime:0, AdminTime:5, Location:'Drury', Notes:'Reconnection session after absence.', RecordCreatedTimestamp:'22/04/2025, 12:05:00 pm' },
+    { ActivityDate:'2025-04-22', StartTime:'13:30', EndTime:'14:30', Duration:60, ActivityType:'Group Session', Programme:'Sports/Leadership', SessionType:'Whole Class', ActivityCreatedBy:'Naomi', MainFacilitator:'Naomi', Facilitator2:'Tj', Facilitator3:'Kiana-Rae', Facilitator4:'', Facilitators:'Naomi, Tj, Kiana-Rae', DeliveryMode:'Face to Face', ActivityClassification:'Education', FollowUpRequired:'No', ParticipantCount:28, GroupName:'Room 12', ParticipantID:'', DeliveryTime:55, TravelTime:0, AdminTime:5, Location:'Otahuhu Primary', Notes:'Sports leadership programme delivery.', RecordCreatedTimestamp:'22/04/2025, 2:35:00 pm' },
+    { ActivityDate:'2025-04-23', StartTime:'09:00', EndTime:'10:00', Duration:60, ActivityType:'General Activity', Programme:'', SessionType:'', ActivityCreatedBy:'Macy', MainFacilitator:'Macy', Facilitator2:'Quentin', Facilitator3:'', Facilitator4:'', Facilitators:'Macy, Quentin', DeliveryMode:'Face to Face', ActivityClassification:'Assessment', FollowUpRequired:'Yes', ParticipantCount:0, GroupName:'', ParticipantID:'', DeliveryTime:50, TravelTime:5, AdminTime:5, Location:'Papakura Intermediate', Notes:'Programme assessment and review.', RecordCreatedTimestamp:'23/04/2025, 10:05:00 am' },
+    { ActivityDate:'2025-04-24', StartTime:'14:00', EndTime:'15:00', Duration:60, ActivityType:'Individual Session', Programme:'Oho Ake', SessionType:'Individual', ActivityCreatedBy:'Kahn', MainFacilitator:'Kahn', Facilitator2:'', Facilitator3:'', Facilitator4:'', Facilitators:'Kahn', DeliveryMode:'Face to Face', ActivityClassification:'Support Session', FollowUpRequired:'No', ParticipantCount:1, GroupName:'', ParticipantID:'STU-009', DeliveryTime:55, TravelTime:0, AdminTime:5, Location:'Karaka', Notes:'Final session before school holiday break.', RecordCreatedTimestamp:'24/04/2025, 3:05:00 pm' },
+  ];
+  seed.reverse().forEach((r, i) => {
+    r.ActivityID = 'ACT-' + String(i + 1).padStart(4, '0');
+    activities.unshift(r);
+  });
+  activityCounter = seed.length + 1;
+})();
+updateCounters();
+</script>
+</body>
+</html>
