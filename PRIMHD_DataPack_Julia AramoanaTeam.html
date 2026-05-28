@@ -267,6 +267,40 @@
         .contact-card p { color: #666; font-size: 13px; }
         .footer { text-align: center; margin-top: 32px; color: #888; font-size: 13px; padding-top: 18px; border-top: 1px solid var(--border); }
 
+        /* SUBMISSIONS PANEL */
+        .submissions-panel { background: white; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-top: 28px; }
+        .submissions-panel-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: var(--light); border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 10px; }
+        .submissions-panel-header h3 { font-size: 15px; color: var(--primary); display: flex; align-items: center; gap: 8px; margin: 0; }
+        .submissions-count { background: var(--accent); color: white; border-radius: 20px; padding: 2px 10px; font-size: 12px; font-weight: 700; }
+        .submission-item { border-bottom: 1px solid var(--border); padding: 16px 20px; transition: background 0.15s; }
+        .submission-item:last-child { border-bottom: none; }
+        .submission-item:hover { background: #f9fbff; }
+        .submission-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px; }
+        .submission-item-meta { font-size: 13px; color: #555; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .submission-item-meta strong { color: var(--primary); font-size: 14px; }
+        .submission-item-meta .date-tag { background: #e8f4fc; color: #2980b9; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+        .submission-delete-btn { background: #fff0f0; color: var(--danger); border: 1px solid #f5c0c0; padding: 5px 12px; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: 600; font-family: inherit; transition: 0.2s; display: flex; align-items: center; gap: 5px; }
+        .submission-delete-btn:hover { background: var(--danger); color: white; }
+        .submission-service { margin-bottom: 8px; }
+        .submission-service-name { font-size: 12px; font-weight: 700; color: var(--primary); margin-bottom: 3px; display: flex; align-items: center; gap: 5px; }
+        .submission-bullet { font-size: 12px; color: #555; padding: 2px 0 2px 14px; position: relative; }
+        .submission-bullet::before { content: '•'; position: absolute; left: 4px; color: var(--accent); }
+        .no-submissions { padding: 36px 20px; text-align: center; color: #aaa; font-size: 14px; font-style: italic; }
+        .expand-submission-btn { background: none; border: none; color: var(--accent); cursor: pointer; font-size: 12px; font-family: inherit; padding: 0; text-decoration: underline; }
+
+        /* PASSWORD MODAL */
+        .pwd-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 10000; align-items: center; justify-content: center; }
+        .pwd-modal-overlay.active { display: flex; }
+        .pwd-modal-box { background: white; border-radius: 12px; padding: 28px 32px; max-width: 380px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.25); }
+        .pwd-modal-box h4 { color: var(--danger); font-size: 17px; margin-bottom: 8px; }
+        .pwd-modal-box p { color: #555; font-size: 13px; margin-bottom: 16px; line-height: 1.5; }
+        .pwd-input { width: 100%; padding: 10px 14px; border: 2px solid var(--border); border-radius: 6px; font-size: 14px; font-family: inherit; outline: none; margin-bottom: 8px; transition: border 0.2s; }
+        .pwd-input:focus { border-color: var(--danger); }
+        .pwd-error { color: var(--danger); font-size: 12px; margin-bottom: 12px; min-height: 18px; }
+        .pwd-btn-row { display: flex; gap: 10px; justify-content: center; }
+        .pwd-confirm-btn { background: var(--danger); color: white; border: none; padding: 9px 22px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; font-family: inherit; }
+        .pwd-cancel-btn { background: #f0f0f0; color: #555; border: none; padding: 9px 22px; border-radius: 6px; cursor: pointer; font-size: 14px; font-family: inherit; }
+
         @media (max-width: 768px) {
             .info-grid { grid-template-columns: 1fr; }
             .tab-btn span.tab-label { display: none; }
@@ -381,7 +415,9 @@
                     <div style="display:flex;flex-direction:column;gap:3px;">
                     <span class="team-pill" style="background:#e67e22;">Housing & Recovery Intense Rehab</span>
                     <span class="team-pill" style="background:#3498db;">Housing & Recovery</span>
+                    <span class="team-pill" style="background:#27ae60;">Rapua</span>
                     <span class="team-pill" style="background:#e74c3c;">Te Paerangi</span>
+                    
                     </div>
                   </td>
                 </tr>
@@ -397,6 +433,8 @@
                     <span class="team-pill" style="background:#27ae60;">Rapua</span>
                     <span class="team-pill" style="background:#e74c3c;">Te Paerangi</span>
                     </div>
+
+
                   </td>
                 </tr>
                 <tr>
@@ -406,7 +444,7 @@
                   <td class="scenario-col">Resident stays overnight in Te Auaunga supported housing with awake night support.</td>
                   <td>
                     <div style="display:flex;flex-direction:column;gap:3px;">
-                    <span class="team-pill" style="background:#e67e22;">Housing & Recovery Intense Rehab</span>
+                    <span class="team-pill" style="background:#e67e22;">Housing &amp; Recovery Intense Rehab</span>
                     </div>
                   </td>
                 </tr>
@@ -512,6 +550,7 @@
                   <td class="scenario-col">Assessment team completes referral screening to determine service eligibility and urgency.</td>
                   <td>
                     <div style="display:flex;flex-direction:column;gap:3px;">
+                    <span class="team-pill" style="background:#e67e22;">Housing & Recovery Intense Rehab</span>
                     <span class="team-pill" style="background:#3498db;">Housing & Recovery</span>
                     <span class="team-pill" style="background:#27ae60;">Rapua</span>
                     <span class="team-pill" style="background:#e74c3c;">Te Paerangi</span>
@@ -558,142 +597,124 @@
                 <tr>
                   <td><span class="tcode-pill" style="background:var(--accent2);font-size:11px;padding:3px 8px;">AV – Audio Visual</span></td>
                   <td><strong>Services provided over a television or video-conference link.</strong></td>
-                  <td class="layman-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td class="scenario-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
+                  <td class="layman-col">Support delivered by Zoom, Teams, Skype, or video call.</td>
+                  <td class="scenario-col">A worker conducts whanaungatanga or completes a support session with a whaiora using Zoom.</td>
+                  <td><span class="team-pill" style="background:#555;">All Teams</span></td>
                 </tr>
                 <tr>
                   <td><span class="tcode-pill" style="background:var(--accent2);font-size:11px;padding:3px 8px;">CM – Community</span></td>
                   <td><strong>Service provided to a tangata whaiora/consumer in a non-hospital setting which is not specifically covered by any of the other definitions.</strong></td>
-                  <td class="layman-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td class="scenario-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
+                  <td class="layman-col">Support delivered out in the community.</td>
+                  <td class="scenario-col">A worker meets a whaiora at a café, park, or community centre for a wellbeing check-in.</td>
+                  <td><span class="team-pill" style="background:#555;">All Teams</span></td>
                 </tr>
                 <tr>
                   <td><span class="tcode-pill" style="background:var(--accent2);font-size:11px;padding:3px 8px;">CT – Court</span></td>
                   <td><strong>Services provided in a Court, including when the Court is held at the healthcare agency or Marae eg Mental Health Act Court.</strong></td>
-                  <td class="layman-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td class="scenario-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
+                  <td class="layman-col">Support provided during court-related processes.</td>
+                  <td class="scenario-col">A worker attends court with a whaiora to provide support and advocacy.</td>
+                  <td><span class="team-pill" style="background:#555;">All Teams</span></td>
                 </tr>
                 <tr>
                   <td><span class="tcode-pill" style="background:var(--accent2);font-size:11px;padding:3px 8px;">DM – Domiciliary</span></td>
                   <td><strong>Services provided to a tangata whaiora/consumer in the tangata whaiora/consumer's or family/whānau member's home.</strong></td>
-                  <td class="layman-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td class="scenario-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
+                  <td class="layman-col">Home visits and whānau-based support.</td>
+                  <td class="scenario-col">A worker visits a whaiora at home to discuss recovery goals and wellbeing needs.</td>
+                  <td><span class="team-pill" style="background:#555;">All Teams</span></td>
                 </tr>
                 <tr>
                   <td><span class="tcode-pill" style="background:var(--accent2);font-size:11px;padding:3px 8px;">DP – Day tangata whaiora/consumer setting</span></td>
                   <td><strong>Services provided to day tangata whaiora/consumers at a facility delivering day programmes.</strong></td>
-                  <td class="layman-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td class="scenario-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
+                  <td class="layman-col">Structured daytime programmes or group activities.</td>
+                  <td class="scenario-col">A whaiora attends a daytime wellbeing or recovery programme at the service site.</td>
+                  <td><span class="team-pill" style="background:#555;">All Teams</span></td>
                 </tr>
                 <tr>
                   <td><span class="tcode-pill" style="background:var(--accent2);font-size:11px;padding:3px 8px;">ED – Emergency Department</span></td>
                   <td><strong>Services provided in a hospital-based emergency department.</strong></td>
-                  <td class="layman-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td class="scenario-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                </tr>
-                <tr>
-                  <td><span class="tcode-pill" style="background:var(--accent2);font-size:11px;padding:3px 8px;">ES – Education Sector</span></td>
-                  <td><strong>Educational institution including schools, preschool, kindergarten, school guidance counsellor, special education services.</strong></td>
-                  <td class="layman-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td class="scenario-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
+                  <td class="layman-col">Crisis or urgent support provided in ED.</td>
+                  <td class="scenario-col">A worker provides mental health support to a whaiora in the emergency department.</td>
+                  <td><span class="team-pill" style="background:#555;">All Teams</span></td>
+
                 </tr>
                 <tr>
                   <td><span class="tcode-pill" style="background:var(--accent2);font-size:11px;padding:3px 8px;">IP – Inpatient</span></td>
                   <td><strong>Services provided in a hospital setting while the tangata whaiora/consumer is an inpatient for mental health and/or addiction.</strong></td>
-                  <td class="layman-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td class="scenario-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
+                  <td class="layman-col">Support provided while admitted to hospital.</td>
+                  <td class="scenario-col">A worker visits a whaiora admitted to an inpatient mental health unit.</td>
+                  <td><span class="team-pill" style="background:#555;">All Teams</span></td>
                 </tr>
                 <tr>
                   <td><span class="tcode-pill" style="background:var(--accent2);font-size:11px;padding:3px 8px;">MC – Māori cultural setting</span></td>
                   <td><strong>Services provided in a setting working under kaupapa Māori.</strong></td>
-                  <td class="layman-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td class="scenario-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
+                  <td class="layman-col">Services delivered within a Māori cultural environment.</td>
+                  <td class="scenario-col">A support session is held at a Marae or kaupapa Māori service setting.</td>
+                  <td><span class="team-pill" style="background:#555;">All Teams</span></td>
                 </tr>
                 <tr>
                   <td><span class="tcode-pill" style="background:var(--accent2);font-size:11px;padding:3px 8px;">NP – Non-psychiatric</span></td>
                   <td><strong>Services provided in other parts of hospital.</strong></td>
-                  <td class="layman-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td class="scenario-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
+                  <td class="layman-col">Support delivered in general hospital wards or clinics.</td>
+                  <td class="scenario-col">A worker provides mental health and/or addiction support to a whaiora in a medical ward.</td>
+                  <td><span class="team-pill" style="background:#555;">All Teams</span></td>
                 </tr>
                 <tr>
                   <td><span class="tcode-pill" style="background:var(--accent2);font-size:11px;padding:3px 8px;">OM – Other Social Media/E-therapy</span></td>
                   <td><strong>Service provided via electronic media applications excluding text and telephone calls, irrespective of the hardware employed and which is not covered by another code.</strong></td>
-                  <td class="layman-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td class="scenario-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
+                  <td class="layman-col">Support delivered through apps, online chat, or social media.</td>
+                  <td class="scenario-col">A worker checks in with a whaiora through an online chat platform or secure messaging app.</td>
+                  <td><span class="team-pill" style="background:#555;">All Teams</span></td>
                 </tr>
                 <tr>
                   <td><span class="tcode-pill" style="background:var(--accent2);font-size:11px;padding:3px 8px;">OS – Onsite</span></td>
                   <td><strong>Services provided in a mental health or alcohol and drug service that is the clinician/staff member's usual place of work, not specifically covered by any of the other definitions.</strong></td>
-                  <td class="layman-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td class="scenario-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
+                  <td class="layman-col">Support delivered at the provider's office or clinic.</td>
+                  <td class="scenario-col">A whaiora attends the service office for a scheduled support appointment.</td>
+                  <td><span class="team-pill" style="background:#555;">All Teams</span></td>
                 </tr>
                 <tr>
                   <td><span class="tcode-pill" style="background:var(--accent2);font-size:11px;padding:3px 8px;">PC – Primary Care</span></td>
                   <td><strong>Health services for individual tangata whaiora/consumers and family/whānau that have direct access to. eg General Practitioners, practice nurses, school-based health services. They are often a tangata whaiora/consumer's first point of contact with health services.</strong></td>
-                  <td class="layman-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td class="scenario-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
+                  <td class="layman-col">Support provided through GP clinics or primary healthcare services.</td>
+                  <td class="scenario-col">A worker meets at or supports a whaiora to a GP clinic to discuss mental health or addiction concerns.</td>
+                  <td><span class="team-pill" style="background:#555;">All Teams</span></td>
                 </tr>
                 <tr>
                   <td><span class="tcode-pill" style="background:var(--accent2);font-size:11px;padding:3px 8px;">PH – Telephone</span></td>
                   <td><strong>Contact with a tangata whaiora/consumer via telephone where the intent/context of the call is considered to be of a significant nature. This excludes telephone calls, for example, where the sole intent is to book or remind a tangata whaiora/consumer of a planned appointment.</strong></td>
-                  <td class="layman-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td class="scenario-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
+                  <td class="layman-col">Meaningful clinical or support phone calls.</td>
+                  <td class="scenario-col">A worker phones a whaiora to complete a wellbeing check and discuss support needs.</td>
+                  <td><span class="team-pill" style="background:#555;">All Teams</span></td>
                 </tr>
                 <tr>
                   <td><span class="tcode-pill" style="background:var(--accent2);font-size:11px;padding:3px 8px;">PO – Police</span></td>
                   <td><strong>Services provided in a police facility.</strong></td>
-                  <td class="layman-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td class="scenario-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
+                  <td class="layman-col">Support delivered in a police station or custody setting.</td>
+                  <td class="scenario-col">A worker attends the police station to assist a whaiora experiencing distress.</td>
+                  <td><span class="team-pill" style="background:#555;">All Teams</span></td>
                 </tr>
                 <tr>
-                  <td><span class="tcode-pill" style="background:var(--accent2);font-size:11px;padding:3px 8px;">PR – Prison</span></td>
-                  <td><strong>A Prison is a facility which detains people sentenced by the Courts or on remand from the Courts. This does not include Youth Justice Facilities.</strong></td>
-                  <td class="layman-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td class="scenario-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                </tr>
-                <tr>
+
                   <td><span class="tcode-pill" style="background:var(--accent2);font-size:11px;padding:3px 8px;">RE – Residential</span></td>
                   <td><strong>Services provided in a community-based residential rehabilitative mental health or alcohol and drug service.</strong></td>
-                  <td class="layman-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td class="scenario-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
+                  <td class="layman-col">Support delivered in supported accommodation or residential rehab.</td>
+                  <td class="scenario-col">A whaiora receives daily support while living in a residential recovery programme.</td>
+                  <td><span class="team-pill" style="background:#e67e22;">Housing &amp; Recovery Intense Rehab</span></td>
                 </tr>
                 <tr>
                   <td><span class="tcode-pill" style="background:var(--accent2);font-size:11px;padding:3px 8px;">SM – SMS text messaging</span></td>
                   <td><strong>Services provided via SMS cellular communications text messaging. Contact with a tangata whaiora/consumer via SMS where the intent/context of the text is considered to be of a significant nature.</strong></td>
-                  <td class="layman-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td class="scenario-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
+                  <td class="layman-col">Important support communication through text message.</td>
+                  <td class="scenario-col">A worker sends supportive text messages to check on a whaiora's wellbeing and safety.</td>
+                  <td><span class="team-pill" style="background:#555;">All Teams</span></td>
                 </tr>
                 <tr>
                   <td><span class="tcode-pill" style="background:var(--accent2);font-size:11px;padding:3px 8px;">WR – Written correspondence</span></td>
                   <td><strong>Services provided via letter, fax or email. Written contact with a tangata whaiora/consumer where the intent/context of the contact is considered to be of a significant nature.</strong></td>
-                  <td class="layman-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td class="scenario-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                </tr>
-                <tr>
-                  <td><span class="tcode-pill" style="background:var(--accent2);font-size:11px;padding:3px 8px;">YJ – Youth Justice Residential Facility</span></td>
-                  <td><strong>Services provided in detention facility (eg Youth Justice facility) not registered as a formal prison. This does not include Police cells where setting code 'PO' should be used.</strong></td>
-                  <td class="layman-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td class="scenario-col"><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
-                  <td><span style="color:#aaa;font-style:italic;font-size:12px;">— waiting on Traci's input —</span></td>
+                  <td class="layman-col">Meaningful support communication through email or written documents.</td>
+                  <td class="scenario-col">A clinician emails a wellbeing plan and follow-up information to a whaiora.</td>
+                  <td><span class="team-pill" style="background:#555;">All Teams</span></td>
+
                 </tr>
                 </tbody>
             </table>
@@ -845,9 +866,110 @@
                 </tr>
                 </tbody>
             </table>
+
+
             <div class="section-divider"></div>
 
-            <h3 style="color:var(--primary);margin:0 0 12px 0;font-size:15px;">D. Recommendation on Clinical Mental Health Service</h3>
+            <h3 style="color:var(--primary);margin:0 0 12px 0;font-size:15px;">D. Practice Guide for Selecting the Right Breakdown for Kaimahi</h3>
+            <p style="color:#555;font-size:13px;margin-bottom:16px;line-height:1.7;">This guide helps staff select the most appropriate Activity Breakdown for any interaction. Remember: one interaction can fit multiple activity types — always record the <strong>primary purpose</strong> of the activity.</p>
+
+            <!-- Important note box -->
+            <div style="background:#fff8e6;border:1px solid #f5d580;border-left:5px solid var(--warn);border-radius:8px;padding:16px 20px;margin-bottom:20px;">
+                <h4 style="color:#7a4f0a;margin-bottom:10px;font-size:14px;display:flex;align-items:center;gap:8px;"><i class="fas fa-exclamation-triangle" style="color:var(--warn);"></i> Important Practice Guidance for Staff</h4>
+                <p style="font-size:13px;color:#6b4c11;margin-bottom:10px;"><strong>One Interaction Can Fit Multiple Activity Types.</strong> For example, a worker transporting a whaiora to a GP appointment while discussing relapse triggers and rebuilding trust could include: Engagement &amp; Whakawhanaungatanga, Clinical &amp; Health Support, and Social &amp; Practical Support.</p>
+                <p style="font-size:13px;color:#6b4c11;"><strong>The key is: Record the PRIMARY purpose of the activity [Primary Type(Setting),Classification(T-Code),and max time added under primary purpose Breakdown].</strong></p>
+            </div>
+
+            <!-- Quick reference table -->
+            <table style="margin-bottom:20px;">
+                <thead>
+                    <tr>
+                        <th style="width:320px;">If the main focus was…</th>
+                        <th>Activity Type / Breakdown</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><i class="fas fa-handshake" style="color:var(--accent);margin-right:8px;"></i> Building trust and connection</td><td><strong>Engagement &amp; Whakawhanaungatanga</strong></td></tr>
+                    <tr><td><i class="fas fa-clipboard-list" style="color:var(--accent);margin-right:8px;"></i> Goals, assessments, reviews</td><td><strong>Assessment, Planning &amp; Review</strong></td></tr>
+                    <tr><td><i class="fas fa-heartbeat" style="color:var(--accent);margin-right:8px;"></i> Health, addiction, treatment</td><td><strong>Clinical &amp; Health Support</strong></td></tr>
+                    <tr><td><i class="fas fa-feather-alt" style="color:var(--accent);margin-right:8px;"></i> Culture, spirituality, identity</td><td><strong>Cultural, Spiritual &amp; Holistic Wellbeing</strong></td></tr>
+                    <tr><td><i class="fas fa-hands-helping" style="color:var(--accent);margin-right:8px;"></i> Everyday practical help</td><td><strong>Social &amp; Practical Support</strong></td></tr>
+                    <tr><td><i class="fas fa-briefcase" style="color:var(--accent);margin-right:8px;"></i> Jobs, study, training</td><td><strong>Employment &amp; Vocational Pathways</strong></td></tr>
+                    <tr><td><i class="fas fa-users" style="color:var(--accent);margin-right:8px;"></i> Groups and structured activities</td><td><strong>Programme Delivery &amp; Participation</strong></td></tr>
+                    <tr><td><i class="fas fa-network-wired" style="color:var(--accent);margin-right:8px;"></i> Coordinating services</td><td><strong>Case Coordination &amp; Service Transitions</strong></td></tr>
+                    <tr><td><i class="fas fa-home" style="color:var(--accent);margin-right:8px;"></i> Family/community outcomes</td><td><strong>Whānau &amp; Wider Outcomes</strong></td></tr>
+                    <tr><td><i class="fas fa-file-alt" style="color:var(--accent);margin-right:8px;"></i> Paperwork/admin</td><td><strong>Administration</strong></td></tr>
+                </tbody>
+            </table>
+
+            <!-- Breakdown detail cards -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:14px;margin-bottom:8px;">
+
+                <div style="background:#f0f8ff;border:1px solid #c9e4f7;border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;">
+                    <h4 style="color:var(--primary);font-size:13px;margin-bottom:6px;display:flex;align-items:center;gap:7px;"><span style="background:var(--accent);color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;">1</span> Engagement &amp; Whakawhanaungatanga</h4>
+                    <p style="font-size:12px;color:#444;line-height:1.6;margin-bottom:6px;">Building trust, connection, safety, and relationship. The relational foundation that allows support to happen.</p>
+                    <p style="font-size:11px;color:#666;font-style:italic;">e.g. Phone welfare checks, coffee catch-ups, home visits for connection, re-engaging after disengagement, text check-ins.</p>
+                </div>
+
+                <div style="background:#f0fff4;border:1px solid #b7eac9;border-left:4px solid var(--success);border-radius:8px;padding:14px 16px;">
+                    <h4 style="color:var(--primary);font-size:13px;margin-bottom:6px;display:flex;align-items:center;gap:7px;"><span style="background:var(--success);color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;">2</span> Assessment, Planning &amp; Review</h4>
+                    <p style="font-size:12px;color:#444;line-height:1.6;margin-bottom:6px;">Understanding needs, setting goals, reviewing progress, and planning next steps — including formal and informal assessments.</p>
+                    <p style="font-size:11px;color:#666;font-style:italic;">e.g. Completing assessments, developing support plans, goal setting, risk plan reviews, measuring outcomes.</p>
+                </div>
+
+                <div style="background:#fff5f5;border:1px solid #f5c0c0;border-left:4px solid var(--danger);border-radius:8px;padding:14px 16px;">
+                    <h4 style="color:var(--primary);font-size:13px;margin-bottom:6px;display:flex;align-items:center;gap:7px;"><span style="background:var(--danger);color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;">3</span> Clinical &amp; Health Support</h4>
+                    <p style="font-size:12px;color:#444;line-height:1.6;margin-bottom:6px;">Health-related interventions, treatment support, symptom management, medication support, and clinical care.</p>
+                    <p style="font-size:11px;color:#666;font-style:italic;">e.g. Medication support, GP appointments, mental health monitoring, relapse prevention, therapy sessions.</p>
+                </div>
+
+                <div style="background:#fdf6ff;border:1px solid #e2c5f5;border-left:4px solid #8e44ad;border-radius:8px;padding:14px 16px;">
+                    <h4 style="color:var(--primary);font-size:13px;margin-bottom:6px;display:flex;align-items:center;gap:7px;"><span style="background:#8e44ad;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;">4</span> Cultural, Spiritual &amp; Holistic Wellbeing</h4>
+                    <p style="font-size:12px;color:#444;line-height:1.6;margin-bottom:6px;">Support focused on identity, wairua, tikanga, culture, belonging, meaning, and holistic wellbeing — recognising recovery is more than symptom reduction.</p>
+                    <p style="font-size:11px;color:#666;font-style:italic;">e.g. Karakia, marae visits, cultural reconnection, rongoā Māori, whakapapa exploration, tangihanga support.</p>
+                </div>
+
+                <div style="background:#fffbf0;border:1px solid #f5e0a0;border-left:4px solid var(--warn);border-radius:8px;padding:14px 16px;">
+                    <h4 style="color:var(--primary);font-size:13px;margin-bottom:6px;display:flex;align-items:center;gap:7px;"><span style="background:var(--warn);color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;">5</span> Social &amp; Practical Support</h4>
+                    <p style="font-size:12px;color:#444;line-height:1.6;margin-bottom:6px;">Helping with daily life needs and practical barriers that affect stability and wellbeing.</p>
+                    <p style="font-size:11px;color:#666;font-style:italic;">e.g. WINZ support, food support, housing applications, budgeting, transport, cleaning support, advocacy.</p>
+                </div>
+
+                <div style="background:#f0f8f5;border:1px solid #b7ddd0;border-left:4px solid var(--accent2);border-radius:8px;padding:14px 16px;">
+                    <h4 style="color:var(--primary);font-size:13px;margin-bottom:6px;display:flex;align-items:center;gap:7px;"><span style="background:var(--accent2);color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;">6</span> Employment, Education &amp; Vocational Pathways</h4>
+                    <p style="font-size:12px;color:#444;line-height:1.6;margin-bottom:6px;">Support focused on helping people move toward employment, education, volunteering, training, or purposeful activity.</p>
+                    <p style="font-size:11px;color:#666;font-style:italic;">e.g. CV creation, job searching, training enrolments, driver licence support, work readiness, volunteering pathways.</p>
+                </div>
+
+                <div style="background:#f5f0ff;border:1px solid #c8b5f0;border-left:4px solid #6c3483;border-radius:8px;padding:14px 16px;">
+                    <h4 style="color:var(--primary);font-size:13px;margin-bottom:6px;display:flex;align-items:center;gap:7px;"><span style="background:#6c3483;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;">7</span> Programme Delivery &amp; Participation</h4>
+                    <p style="font-size:12px;color:#444;line-height:1.6;margin-bottom:6px;">Structured programmes, groups, workshops, and organised activities — either facilitating or participating.</p>
+                    <p style="font-size:11px;color:#666;font-style:italic;">e.g. Running recovery groups, life skills programmes, wānanga, psychoeducation groups, recovery workshops.</p>
+                </div>
+
+                <div style="background:#eaf4fb;border:1px solid #aed4eb;border-left:4px solid #2471a3;border-radius:8px;padding:14px 16px;">
+                    <h4 style="color:var(--primary);font-size:13px;margin-bottom:6px;display:flex;align-items:center;gap:7px;"><span style="background:#2471a3;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;">8</span> Case Coordination &amp; Service Transitions</h4>
+                    <p style="font-size:12px;color:#444;line-height:1.6;margin-bottom:6px;">Behind-the-scenes coordination ensuring services communicate and transitions happen safely.</p>
+                    <p style="font-size:11px;color:#666;font-style:italic;">e.g. Multi-agency meetings, referrals, coordinating services, transition planning, hospital discharge planning.</p>
+                </div>
+
+                <div style="background:#fdf0f5;border:1px solid #f0bad3;border-left:4px solid #c0392b;border-radius:8px;padding:14px 16px;">
+                    <h4 style="color:var(--primary);font-size:13px;margin-bottom:6px;display:flex;align-items:center;gap:7px;"><span style="background:#c0392b;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;">9</span> Whānau &amp; Wider Outcomes</h4>
+                    <p style="font-size:12px;color:#444;line-height:1.6;margin-bottom:6px;">Impacts and support involving whānau, tamariki, relationships, and wider community wellbeing.</p>
+                    <p style="font-size:11px;color:#666;font-style:italic;">e.g. Whānau hui, parenting support, family mediation, rebuilding relationships, strengthening natural supports.</p>
+                </div>
+
+                <div style="background:#f5f5f5;border:1px solid #ccc;border-left:4px solid #7f8c8d;border-radius:8px;padding:14px 16px;">
+                    <h4 style="color:var(--primary);font-size:13px;margin-bottom:6px;display:flex;align-items:center;gap:7px;"><span style="background:#7f8c8d;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;">10</span> Administration</h4>
+                    <p style="font-size:12px;color:#444;line-height:1.6;margin-bottom:6px;">Operational work needed to support service delivery but not direct support itself.</p>
+                    <p style="font-size:11px;color:#666;font-style:italic;">e.g. Writing case notes, emails, reporting, data entry, internal admin, scheduling, filing documentation.</p>
+                </div>
+
+            </div>
+
+            <div class="section-divider"></div>
+
+            <h3 style="color:var(--primary);margin:0 0 12px 0;font-size:15px;">E. Recommendation on Clinical Mental Health Service</h3>
             <div class="feedback-box">
                 <p>Recommendation to remove Clinical Mental Health Service and utilise Clinical Template across services:</p>
                 <ul>
@@ -859,7 +981,7 @@
 
             <div class="section-divider"></div>
 
-            <h3 style="color:var(--primary);margin:0 0 12px 0;font-size:15px;">E. Service Delivery Feedback</h3>
+            <h3 style="color:var(--primary);margin:0 0 12px 0;font-size:15px;">F. Service Delivery Feedback</h3>
             <div class="feedback-box">
                 <p>We kindly request your feedback on:</p>
                 <ul>
@@ -872,7 +994,7 @@
 
             <div class="section-divider"></div>
 
-            <h3 style="color:var(--primary);margin:0 0 12px 0;font-size:15px;">F. Next Steps After Review &amp; Confirmation</h3>
+            <h3 style="color:var(--primary);margin:0 0 12px 0;font-size:15px;">G. Next Steps After Review &amp; Confirmation</h3>
             <div class="feedback-box">
                 <p>Once we receive review and feedback from Directors and Branch Managers on the shared Data Pack, and confirm the PRIMHD activity codes for their services, we will move forward with proposing a new activity template design.</p>
                 <p style="margin-top:8px;">The proposed advanced activity template will:</p>
@@ -1434,6 +1556,18 @@
                 </button>
                 <span id="submit-hint" style="font-size:13px;color:#aaa;font-style:italic;"></span>
             </div>
+
+            <!-- SUBMISSIONS VIEWER -->
+            <div class="submissions-panel" id="submissionsPanel">
+                <div class="submissions-panel-header">
+                    <h3><i class="fas fa-inbox" style="color:var(--accent);"></i> Submitted Feedback Records <span class="submissions-count" id="submissionsCount">0</span></h3>
+                    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                        <span style="font-size:12px;color:#888;font-style:italic;"><i class="fas fa-lock" style="color:var(--danger);margin-right:4px;"></i>Delete requires password</span>
+                        <button onclick="toggleSubmissionsView()" style="background:var(--accent);color:white;border:none;padding:6px 14px;border-radius:6px;cursor:pointer;font-size:12px;font-family:inherit;" id="toggleSubBtn"><i class="fas fa-eye"></i> Show Records</button>
+                    </div>
+                </div>
+                <div id="submissionsBody" style="display:none;"></div>
+            </div>
         </div>
     </div>
 
@@ -1444,8 +1578,22 @@
         <div class="contact-card"><h4><i class="fas fa-user-graduate"></i> Advisory</h4><p><strong>Traci-Mae Nathan</strong></p></div>
     </div>
     <div class="footer">
-        <p>PRIMHD T-Code Alignment Project | Data Pack for Julia Aramoana Team | Prepared by Gourav Saini, 2025</p>
+        <p>PRIMHD T-Code Alignment Project | Data Pack for Julia Aramoana Team | Prepared by Gourav Saini, May 2026</p>
         <p>Confidential: For Mahitahi Project Stakeholders Review Only</p>
+    </div>
+</div>
+
+<!-- PASSWORD MODAL -->
+<div class="pwd-modal-overlay" id="pwdModal">
+    <div class="pwd-modal-box">
+        <h4><i class="fas fa-lock"></i> Delete Confirmation</h4>
+        <p>This record cannot be deleted without authorisation. Please enter the admin password to proceed.</p>
+        <input type="password" class="pwd-input" id="pwdInput" placeholder="Enter password…">
+        <div class="pwd-error" id="pwdError"></div>
+        <div class="pwd-btn-row">
+            <button class="pwd-confirm-btn" id="pwdConfirmBtn"><i class="fas fa-trash"></i> Delete</button>
+            <button class="pwd-cancel-btn" id="pwdCancelBtn">Cancel</button>
+        </div>
     </div>
 </div>
 
@@ -1724,6 +1872,9 @@ function handleSubmit() {
         '==============================================',
     ];
 
+    // Build structured data for localStorage
+    var submissionData = { director: director, date: date, timestamp: Date.now(), services: [] };
+
     services.forEach(function(s) {
         lines.push('');
         lines.push('──────────────────────────────');
@@ -1734,12 +1885,27 @@ function handleSubmit() {
         lines.push(collectBullets('Activity Type (Setting) Comments:', s.type));
         lines.push('');
         lines.push(collectBullets('Breakdown Comments:', s.bd));
+
+        submissionData.services.push({
+            name: s.name,
+            tcode: getBullets(s.tcode),
+            type: getBullets(s.type),
+            bd: getBullets(s.bd)
+        });
     });
 
     lines.push('');
     lines.push('==============================================');
     lines.push('Submitted via PRIMHD T-Code Alignment Director Data Pack.');
     lines.push('Regards, ' + director);
+
+    // Save to localStorage
+    try {
+        var existing = JSON.parse(localStorage.getItem('primhd_submissions') || '[]');
+        existing.push(submissionData);
+        localStorage.setItem('primhd_submissions', JSON.stringify(existing));
+        refreshSubmissionsPanel();
+    } catch(e) { /* storage unavailable */ }
 
     var em = 'gourav.saini' + String.fromCharCode(64) + 'mahitahi.co.nz';
     var subject = encodeURIComponent('PRIMHD Feedback — ' + director);
@@ -1754,10 +1920,122 @@ function handleSubmit() {
     }, 700);
 }
 
+// ── Submissions panel ────────────────────────────────────────────────
+var pendingDeleteIndex = null;
+
+function toggleSubmissionsView() {
+    var body = document.getElementById('submissionsBody');
+    var btn = document.getElementById('toggleSubBtn');
+    if (!body) return;
+    var visible = body.style.display !== 'none';
+    body.style.display = visible ? 'none' : 'block';
+    btn.innerHTML = visible ? '<i class="fas fa-eye"></i> Show Records' : '<i class="fas fa-eye-slash"></i> Hide Records';
+}
+
+function refreshSubmissionsPanel() {
+    var submissions = [];
+    try { submissions = JSON.parse(localStorage.getItem('primhd_submissions') || '[]'); } catch(e) {}
+    var countEl = document.getElementById('submissionsCount');
+    var bodyEl = document.getElementById('submissionsBody');
+    if (countEl) countEl.textContent = submissions.length;
+    if (!bodyEl) return;
+
+    if (!submissions.length) {
+        bodyEl.innerHTML = '<div class="no-submissions"><i class="fas fa-inbox" style="font-size:28px;display:block;margin-bottom:8px;color:#ddd;"></i>No feedback submissions yet. Use the form above to submit your feedback.</div>';
+        return;
+    }
+
+    var html = '';
+    submissions.forEach(function(sub, idx) {
+        var hasContent = sub.services && sub.services.some(function(s) { return s.tcode.length || s.type.length || s.bd.length; });
+        html += '<div class="submission-item">';
+        html += '<div class="submission-item-header">';
+        html += '<div class="submission-item-meta"><strong><i class="fas fa-user-tie" style="margin-right:5px;color:var(--accent);"></i>' + escHtml(sub.director) + '</strong><span class="date-tag"><i class="fas fa-calendar-alt" style="margin-right:4px;"></i>' + escHtml(sub.date) + '</span></div>';
+        html += '<button class="submission-delete-btn" onclick="promptDelete(' + idx + ')"><i class="fas fa-trash"></i> Delete</button>';
+        html += '</div>';
+
+        if (hasContent && sub.services) {
+            sub.services.forEach(function(svc) {
+                var svcHasContent = svc.tcode.length || svc.type.length || svc.bd.length;
+                if (!svcHasContent) return;
+                html += '<div class="submission-service">';
+                html += '<div class="submission-service-name"><i class="fas fa-circle" style="font-size:7px;color:var(--accent);"></i> ' + escHtml(svc.name) + '</div>';
+                if (svc.tcode.length) {
+                    html += '<div style="font-size:11px;color:#999;font-weight:600;margin:3px 0 2px 14px;text-transform:uppercase;letter-spacing:0.4px;">T-Code Comments</div>';
+                    svc.tcode.forEach(function(b) { html += '<div class="submission-bullet">' + escHtml(b.replace(/^\s*•\s*/, '')) + '</div>'; });
+                }
+                if (svc.type.length) {
+                    html += '<div style="font-size:11px;color:#999;font-weight:600;margin:3px 0 2px 14px;text-transform:uppercase;letter-spacing:0.4px;">Activity Type Comments</div>';
+                    svc.type.forEach(function(b) { html += '<div class="submission-bullet">' + escHtml(b.replace(/^\s*•\s*/, '')) + '</div>'; });
+                }
+                if (svc.bd.length) {
+                    html += '<div style="font-size:11px;color:#999;font-weight:600;margin:3px 0 2px 14px;text-transform:uppercase;letter-spacing:0.4px;">Breakdown Comments</div>';
+                    svc.bd.forEach(function(b) { html += '<div class="submission-bullet">' + escHtml(b.replace(/^\s*•\s*/, '')) + '</div>'; });
+                }
+                html += '</div>';
+            });
+        } else {
+            html += '<div style="font-size:12px;color:#aaa;font-style:italic;padding:4px 0;">No comments were added in this submission.</div>';
+        }
+        html += '</div>';
+    });
+    bodyEl.innerHTML = html;
+}
+
+function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function promptDelete(idx) {
+    pendingDeleteIndex = idx;
+    var modal = document.getElementById('pwdModal');
+    var input = document.getElementById('pwdInput');
+    var errEl = document.getElementById('pwdError');
+    if (input) input.value = '';
+    if (errEl) errEl.textContent = '';
+    if (modal) modal.classList.add('active');
+    setTimeout(function() { if (input) input.focus(); }, 100);
+}
+
+function confirmDelete() {
+    var input = document.getElementById('pwdInput');
+    var errEl = document.getElementById('pwdError');
+    var pwd = input ? input.value : '';
+    if (pwd !== 'PRIMHD@2026G') {
+        if (errEl) errEl.textContent = 'Incorrect password. Please try again.';
+        if (input) { input.value = ''; input.focus(); }
+        return;
+    }
+    // Password correct — delete the record
+    try {
+        var submissions = JSON.parse(localStorage.getItem('primhd_submissions') || '[]');
+        if (pendingDeleteIndex !== null && pendingDeleteIndex >= 0 && pendingDeleteIndex < submissions.length) {
+            submissions.splice(pendingDeleteIndex, 1);
+            localStorage.setItem('primhd_submissions', JSON.stringify(submissions));
+        }
+    } catch(e) {}
+    pendingDeleteIndex = null;
+    var modal = document.getElementById('pwdModal');
+    if (modal) modal.classList.remove('active');
+    refreshSubmissionsPanel();
+}
+
+function cancelDelete() {
+    pendingDeleteIndex = null;
+    var modal = document.getElementById('pwdModal');
+    if (modal) modal.classList.remove('active');
+}
+
 function closeModal(id) {
     var el = document.getElementById(id);
     if (el) el.classList.remove('active');
 }
+
+// Expose to global scope so inline onclick attributes can reach these functions
+window.toggleSubmissionsView = toggleSubmissionsView;
+window.promptDelete = promptDelete;
+window.confirmDelete = confirmDelete;
+window.cancelDelete = cancelDelete;
 
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -1818,6 +2096,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Modal close
     var closeBtn = document.getElementById('closeModalBtn');
     if (closeBtn) closeBtn.addEventListener('click', function() { closeModal('successModal'); });
+
+    // Password modal
+    var pwdConfirm = document.getElementById('pwdConfirmBtn');
+    if (pwdConfirm) pwdConfirm.addEventListener('click', confirmDelete);
+    var pwdCancel = document.getElementById('pwdCancelBtn');
+    if (pwdCancel) pwdCancel.addEventListener('click', cancelDelete);
+    var pwdInput = document.getElementById('pwdInput');
+    if (pwdInput) pwdInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') confirmDelete(); if (e.key === 'Escape') cancelDelete(); });
+
+    // Initialise submissions panel
+    refreshSubmissionsPanel();
 
     // Editable director name
     var nameEl = document.getElementById('director-name');
